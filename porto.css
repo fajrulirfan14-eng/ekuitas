@@ -1,0 +1,241 @@
+
+.investor-porto-header {
+  position: relative;
+  background: linear-gradient(180deg, var(--home-header-bg) 0%, var(--home-header-bg-end) 100%);
+  color: var(--text-on-accent);
+  padding: 24px 16px 40px;
+  border-radius: 0 0 24px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  box-shadow: 0 8px 24px var(--shadow-heavy);
+}
+
+.investor-porto-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--text-on-accent-muted);
+}
+
+.investor-porto-eye {
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.investor-porto-ekuitas {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text-on-accent);
+}
+
+.investor-porto-return-pill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--overlay-soft);
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-on-accent);
+}
+
+.investor-porto-return-percent {
+  font-weight: 700;
+  color: var(--success-on-accent);
+}
+
+.investor-porto-return-percent.negative {
+  color: var(--danger-on-accent);
+}
+
+.investor-porto-content {
+  padding: 24px 16px 16px;
+  margin-top: 0;
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.investor-porto-tabs {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.investor-porto-tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 14px 8px;
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+  background: var(--bg-card);
+  color: var(--text-secondary);
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.investor-porto-tab i {
+  font-size: 18px;
+  color: var(--home-menu-icon);
+}
+
+.investor-porto-tab.active {
+  background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+  color: var(--text-inverse);
+  border-color: transparent;
+}
+
+.investor-porto-tab.active i {
+  color: var(--text-inverse);
+}
+
+.investor-porto-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  padding: 24px 16px;
+  min-height: 200px;
+}
+
+.investor-porto-card:has(.investor-porto-placeholder) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.investor-porto-placeholder {
+  color: var(--text-muted);
+  font-size: 13px;
+  text-align: center;
+}
+
+.investor-neraca-periode-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  background: var(--bg-hover);
+  border: none;
+  border-radius: 10px;
+  padding: 8px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--accent-dark);
+  margin-bottom: 14px;
+  cursor: pointer;
+}
+
+.investor-neraca-periode-btn i {
+  font-size: 10px;
+}
+.investor-neraca-section {
+  margin-bottom: 16px;
+}
+
+.investor-neraca-section-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--accent-dark);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  margin-bottom: 8px;
+}
+
+.investor-neraca-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 7px 0;
+  border-bottom: 1px solid var(--home-divider);
+  font-size: 13px;
+}
+
+.investor-neraca-row:last-child {
+  border-bottom: none;
+}
+
+.investor-neraca-nama {
+  color: var(--text-primary);
+}
+
+.investor-neraca-nilai {
+  color: var(--text-heading);
+  font-weight: 600;
+}
+
+.investor-neraca-subtotal {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-heading);
+}
+
+.investor-neraca-grandtotal {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding: 14px;
+  border-radius: 12px;
+  background: var(--bg-hover);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-heading);
+}
+
+.investor-neraca-grandtotal.balanced {
+  color: var(--success);
+}
+
+.investor-neraca-grandtotal.unbalanced {
+  color: var(--danger);
+}
+
+.investor-neraca-laba-positif {
+  color: var(--success) !important;
+  font-weight: 700;
+}
+
+.investor-neraca-laba-negatif {
+  color: var(--danger) !important;
+  font-weight: 700;
+}
+
+.investor-roi-value {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.investor-roi-percent {
+  font-size: 11px;
+  opacity: 0.85;
+}
+.investor-neraca-laba-box {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 8px;
+  padding: 14px;
+  border-radius: 12px;
+  font-size: 14px;
+}
+
+.investor-neraca-laba-positif-bg {
+  background: var(--success-bg);
+}
+
+.investor-neraca-laba-negatif-bg {
+  background: rgba(220, 57, 43, 0.1);
+}

@@ -1,0 +1,99 @@
+:root {
+  /* ===== BACKGROUND ===== */
+  --bg-primary:       #F5EFE6;
+  --bg-secondary:     #FFFDFB;
+  --bg-card:          #FFFFFF;
+  --bg-input:         #FAF6F0;
+  --bg-hover:         rgba(184, 130, 66, 0.08);
+
+  /* ===== TEXT ===== */
+  --text-primary:     #5E4B3B;
+  --text-secondary:   #8C7A68;
+  --text-heading:     #3E2F23;
+  --text-muted:       rgba(94, 75, 59, 0.55);
+  --text-inverse:     #FFFFFF;
+
+  /* Text di atas background accent/gradasi (header, card gelap) */
+  --text-on-accent:        #FFFFFF;
+  --text-on-accent-muted:  rgba(255, 255, 255, 0.78);
+  --text-on-accent-faint:  rgba(255, 255, 255, 0.6);
+
+  /* ===== BORDER & SHADOW ===== */
+  --border-color:     rgba(94, 75, 59, 0.12);
+  --border-light:     rgba(255, 255, 255, 0.2);
+  --shadow-color:     rgba(120, 78, 33, 0.14);
+  --shadow-heavy:     rgba(120, 78, 33, 0.32);
+
+  /* ===== ACCENT (bronze/copper krem) ===== */
+  --accent:           #C08A45;
+  --accent-light:     #E0B378;
+  --accent-dark:      #7A5322;
+  --accent-glow:      rgba(224, 179, 120, 0.55);
+
+  /* Overlay kaca (dipakai di atas background gradasi/gelap) */
+  --overlay-soft:     rgba(255, 255, 255, 0.14);
+  --overlay-strong:   rgba(255, 255, 255, 0.24);
+
+  /* ===== STATUS ===== */
+  --success:          #178A4C;
+  --success-bg:       #EEFBF3;
+  --warning:          #B8860B;
+  --danger:           #C0392B;
+  --info:             #2563EB;
+
+  /* Status di atas background gelap/gradasi (lebih terang biar kontras) */
+  --success-on-accent: #8FE3B0;
+  --danger-on-accent:  #F5A79A;
+
+  /* ===== NAVBAR ===== */
+  --nav-curve-r:      52;
+  --nav-curve-dip:    32;
+  --nav-curve-cp:     0.55;
+  --nav-height:       80;
+  --nav-radius:       16;
+  --nav-color:        #7A5322;
+  --nav-color-shadow: rgba(120, 78, 33, 0.32);
+  --nav-fab-border:   #F5EFE6;
+
+  /* ===== TRANSITIONS ===== */
+  --transition-fast:  0.15s ease;
+  --transition-base:  0.25s ease;
+  --transition-slow:  0.4s cubic-bezier(.34, 1.2, .64, 1);
+
+  /* ===== HOME VIEW ===== */
+  --home-header-bg:         #C79355;
+  --home-header-bg-end:     #7A5322;
+  --home-header-text:       #FFFFFF;
+  --home-avatar-bg:         #EFDCBB;
+  --home-avatar-border:     #FFFFFF;
+  --home-card-bg:           #FFFFFF;
+  --home-card-border:       #C08A45;
+  --home-menu-bg:           #FFFFFF;
+  --home-menu-icon:         #B8824A;
+  --home-menu-text:         #5E4B3B;
+  --home-time-color:        #B8824A;
+  --home-divider:           #f1ece6;
+
+  --user-font-scale: 1;
+}
+
+html.dark-mode {
+  --bg-primary:       #1c1a17;
+  --bg-secondary:     #24211d;
+  --bg-card:          #2a2622;
+  --bg-input:         #201d19;
+  --bg-hover:         rgba(224, 179, 120, 0.12);
+
+  --text-primary:     #e8ded0;
+  --text-secondary:   #b9ab98;
+  --text-heading:     #f5efe6;
+  --text-muted:       rgba(232, 222, 208, 0.55);
+
+  --border-color:     rgba(232, 222, 208, 0.12);
+  --shadow-color:     rgba(0, 0, 0, 0.35);
+  --shadow-heavy:     rgba(0, 0, 0, 0.5);
+
+  --home-divider:     rgba(232, 222, 208, 0.08);
+  --home-card-bg:     #2a2622;
+  --home-menu-bg:     #2a2622;
+}

@@ -1,0 +1,356 @@
+
+:root {
+  --radius-sm:   10px;
+  --radius-md:   12px;
+  --radius-lg:   16px;
+  --radius-xl:   20px;
+  --radius-2xl:  22px;
+  --radius-3xl:  28px;
+  --radius-full: 9999px;
+  --transition-fast:   0.15s ease;
+  --transition-normal: 0.25s ease;
+}
+.tentang-page {
+  min-height: 100vh;
+  background: var(--bg-primary);
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+}
+
+/* ── HEADER ── */
+.tentang-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  background: var(--bg-secondary);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  z-index: 100;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.tentang-back-btn {
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 12px;
+  background: var(--bg-hover);
+  color: var(--accent-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
+.tentang-back-btn:active {
+  transform: scale(0.93);
+  background: rgba(179, 135, 79, 0.16);
+}
+
+.tentang-header-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-heading);
+}
+
+/* ── HERO ── */
+.tentang-hero {
+  margin-top: 56px;
+  position: relative;
+  padding: 40px 24px 50px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow: hidden;
+}
+
+.tentang-hero-bg {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, var(--home-header-bg) 0%, var(--home-header-bg-end) 100%);
+}
+
+.tentang-hero-pattern {
+  position: absolute;
+  inset: 0;
+  opacity: 0.05;
+  background-image: radial-gradient(circle, #fff 1px, transparent 1px);
+  background-size: 18px 18px;
+}
+
+.tentang-logo-wrap {
+  position: relative;
+  z-index: 1;
+  width: 80px;
+  height: 80px;
+  border-radius: 22px;
+  background: var(--bg-card);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 14px;
+  box-shadow: 0 8px 24px var(--shadow-heavy);
+  overflow: hidden;
+}
+
+.tentang-logo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.tentang-logo-fallback {
+  display: none;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--accent-dark);
+  background: rgba(179, 135, 79, 0.14);
+}
+
+.tentang-app-name {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-on-accent);
+  position: relative;
+  z-index: 1;
+  margin-bottom: 2px;
+}
+
+.tentang-app-sub {
+  font-size: 13px;
+  color: var(--text-on-accent-muted);
+  position: relative;
+  z-index: 1;
+  margin-bottom: 12px;
+}
+
+.tentang-app-version {
+  position: relative;
+  z-index: 1;
+  background: var(--overlay-soft);
+  border: 1px solid var(--overlay-strong);
+  color: var(--text-on-accent);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 14px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* ── BODY ── */
+.tentang-body {
+  background: var(--bg-primary);
+  border-radius: 28px 28px 0 0;
+  margin-top: -24px;
+  padding: 20px 16px 40px;
+  position: relative;
+  z-index: 2;
+  flex: 1;
+}
+
+/* ── DESC CARD ── */
+.tentang-desc-card {
+  background: var(--bg-hover);
+  border-radius: 16px;
+  padding: 16px;
+  border: 1px solid var(--border-color);
+  margin-bottom: 4px;
+}
+
+.tentang-desc-text {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  text-align: center;
+}
+
+/* ── SECTION LABEL ── */
+.tentang-section-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.7px;
+  margin: 20px 4px 8px;
+}
+
+/* ── CARD ── */
+.tentang-card {
+  background: var(--bg-card);
+  border-radius: 20px;
+  padding: 4px 16px;
+  box-shadow: 0 2px 12px var(--shadow-color);
+}
+
+.tentang-card-sep {
+  height: 1px;
+  background: var(--home-divider);
+  margin: 0 0 0 50px;
+}
+
+.tentang-card-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 13px 0;
+  cursor: pointer;
+  transition: opacity var(--transition-fast);
+  -webkit-tap-highlight-color: transparent;
+}
+.tentang-card-item:active { opacity: 0.6; }
+
+.tentang-card-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+.tentang-card-icon.brown { background: rgba(179, 135, 79, 0.14); color: var(--accent-dark); }
+.tentang-card-icon.blue  { background: rgba(37, 99, 235, 0.12); color: var(--info); }
+.tentang-card-icon.green { background: var(--success-bg); color: var(--success); }
+.tentang-card-icon.gray  { background: var(--bg-hover); color: var(--text-secondary); }
+
+.tentang-card-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.tentang-card-label {
+  font-size: 10px;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  margin-bottom: 2px;
+}
+
+.tentang-card-value {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-heading);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tentang-link  { color: var(--accent); }
+.tentang-arrow {
+  font-size: 11px;
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+/* ── SOSMED ── */
+.tentang-sosmed-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.tentang-sosmed-card {
+  background: var(--bg-card);
+  border-radius: 16px;
+  padding: 14px 8px;
+  text-align: center;
+  box-shadow: 0 2px 12px var(--shadow-color);
+  cursor: pointer;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  -webkit-tap-highlight-color: transparent;
+}
+.tentang-sosmed-card:active {
+  transform: scale(0.95);
+  box-shadow: 0 1px 6px var(--shadow-heavy);
+}
+
+.tentang-sosmed-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  margin: 0 auto 8px;
+}
+
+/* Sosmed brand colors — intentionally not themed, brand identity stays fixed */
+.tentang-sosmed-icon.ig {
+  background: linear-gradient(135deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+  color: #fff;
+}
+.tentang-sosmed-icon.fb {
+  background: #1877f2;
+  color: #fff;
+}
+.tentang-sosmed-icon.tt {
+  background: #010101;
+  color: #fff;
+}
+
+.tentang-sosmed-name {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-heading);
+  margin-bottom: 2px;
+}
+
+.tentang-sosmed-handle {
+  font-size: 9px;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── FOOTER ── */
+.tentang-footer {
+  margin-top: 28px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.tentang-footer-logo {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: var(--accent-dark);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 8px;
+  box-shadow: 0 4px 12px var(--shadow-heavy);
+}
+
+.tentang-footer-text {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.tentang-footer-sub {
+  font-size: 11px;
+  color: var(--text-muted);
+}

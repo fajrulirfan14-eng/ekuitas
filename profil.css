@@ -1,0 +1,529 @@
+.investor-profil-header {
+  background: linear-gradient(180deg, var(--home-header-bg) 0%, var(--home-header-bg-end) 100%);
+  border-radius: 0 0 24px 24px;
+  padding: 32px 16px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 8px 24px var(--shadow-heavy);
+}
+
+.investor-profil-avatar-wrap {
+  position: relative;
+  width: 84px;
+  height: 84px;
+  margin-bottom: 8px;
+}
+
+.investor-profil-avatar {
+  width: 84px;
+  height: 84px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: var(--home-avatar-bg);
+  border: 3px solid var(--home-avatar-border);
+}
+
+.investor-profil-edit-btn {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid var(--home-header-bg-end);
+  background: var(--accent-dark);
+  color: #fff;
+  font-size: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.investor-profil-nama {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text-on-accent);
+}
+
+.investor-profil-email {
+  font-size: 12px;
+  color: var(--text-on-accent-muted);
+}
+
+.investor-profil-content {
+  padding: 20px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.investor-profil-info-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 4px 16px var(--shadow-color);
+}
+
+.investor-profil-info-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--accent-dark);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  margin-bottom: 12px;
+}
+
+.investor-profil-info-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--home-divider);
+}
+
+.investor-profil-info-row:last-child {
+  border-bottom: none;
+}
+
+.investor-profil-info-row i {
+  width: 18px;
+  margin-top: 2px;
+  font-size: 14px;
+  color: var(--home-menu-icon);
+}
+
+.investor-profil-info-label {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-bottom: 2px;
+}
+
+.investor-profil-info-value {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+/* ===== AKSESIBILITAS SHEET ===== */
+.investor-akses-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.investor-akses-header-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.investor-akses-header-left i {
+  color: var(--accent-dark);
+  font-size: 16px;
+}
+
+.investor-akses-close-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  border: none;
+  background: var(--bg-hover);
+  color: var(--text-primary);
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.investor-akses-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--bg-hover);
+  border-radius: 16px;
+  padding: 14px;
+  margin-bottom: 12px;
+}
+
+.investor-akses-row-column {
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.investor-akses-row-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.investor-akses-row-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: var(--bg-card);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent-dark);
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.investor-akses-row-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.investor-akses-row-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-heading);
+}
+
+.investor-akses-row-desc {
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin-top: 2px;
+}
+
+.investor-akses-fontvalue {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--accent-dark);
+}
+
+.investor-akses-slider-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.investor-akses-slider-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: none;
+  background: var(--bg-card);
+  color: var(--text-primary);
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.investor-akses-slider {
+  flex: 1;
+  accent-color: var(--accent);
+}
+
+/* Toggle switch */
+.investor-toggle {
+  position: relative;
+  width: 46px;
+  height: 26px;
+  flex-shrink: 0;
+}
+
+.investor-toggle input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.investor-toggle-slider {
+  position: absolute;
+  inset: 0;
+  background: var(--border-color);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.investor-toggle-slider::before {
+  content: "";
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  left: 3px;
+  top: 3px;
+  background: #fff;
+  border-radius: 50%;
+  transition: transform 0.2s ease;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.25);
+}
+
+.investor-toggle input:checked + .investor-toggle-slider {
+  background: var(--accent);
+}
+
+.investor-toggle input:checked + .investor-toggle-slider::before {
+  transform: translateX(20px);
+}
+.investor-profil-menu {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 16px var(--shadow-color);
+}
+
+.investor-profil-menu-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  background: none;
+  border: none;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  cursor: pointer;
+}
+
+.investor-profil-menu-item i {
+  width: 20px;
+  font-size: 16px;
+  color: var(--home-menu-icon);
+}
+
+.investor-profil-logout {
+  color: var(--danger);
+}
+
+.investor-profil-logout i {
+  color: var(--danger);
+}
+
+/* ===== DROPDOWN EDIT FOTO ===== */
+.investor-profil-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: -20px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+  box-shadow: 0 8px 24px var(--shadow-heavy);
+  padding: 6px;
+  min-width: 160px;
+  z-index: 20;
+  display: none;
+  flex-direction: column;
+}
+
+.investor-profil-dropdown.open {
+  display: flex;
+}
+
+.investor-profil-dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 12px;
+  background: none;
+  border: none;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  cursor: pointer;
+  text-align: left;
+}
+
+.investor-profil-dropdown-item:active {
+  background: var(--bg-hover);
+}
+
+.investor-profil-dropdown-item i {
+  width: 16px;
+  font-size: 14px;
+  color: var(--home-menu-icon);
+}
+
+.investor-profil-dropdown-danger,
+.investor-profil-dropdown-danger i {
+  color: var(--danger);
+}
+
+/* ===== CROP MODAL ===== */
+.investor-crop-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 2000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.investor-crop-overlay.active {
+  display: flex;
+}
+
+.investor-crop-modal {
+  background: var(--bg-secondary);
+  border-radius: 20px;
+  padding: 20px;
+  width: 100%;
+  max-width: 340px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.investor-crop-header {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-heading);
+  text-align: center;
+}
+
+.investor-crop-viewport {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  overflow: hidden;
+  background: #000;
+  touch-action: none;
+  cursor: grab;
+}
+
+.investor-crop-image {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  max-width: none;
+  pointer-events: none;
+  user-select: none;
+}
+
+.investor-crop-zoom {
+  width: 100%;
+  accent-color: var(--accent);
+}
+
+.investor-crop-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.investor-crop-btn {
+  flex: 1;
+  height: 46px;
+  border-radius: 12px;
+  border: none;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.investor-crop-cancel {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.investor-crop-save {
+  background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+  color: #fff;
+}
+
+/* ===== CONFIRM DELETE MODAL ===== */
+.investor-confirm-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 2000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.investor-confirm-overlay.active {
+  display: flex;
+}
+
+.investor-confirm-modal {
+  background: var(--bg-card);
+  border-radius: 20px;
+  padding: 24px 20px;
+  width: 100%;
+  max-width: 320px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 8px;
+}
+
+.investor-confirm-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: var(--success-bg);
+  color: var(--danger);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  margin-bottom: 4px;
+}
+
+.investor-confirm-icon-neutral {
+  background: var(--bg-hover);
+  color: var(--accent-dark);
+}
+.investor-confirm-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-heading);
+}
+
+.investor-confirm-desc {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+}
+
+.investor-confirm-actions {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+}
+
+.investor-confirm-btn {
+  flex: 1;
+  height: 44px;
+  border-radius: 12px;
+  border: none;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.investor-confirm-cancel {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.investor-confirm-delete {
+  background: var(--danger);
+  color: #fff;
+}
+
+/* ── VERSION ── */
+.profil-version {
+  text-align: center;
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 16px;
+  padding-bottom: 20px;
+}

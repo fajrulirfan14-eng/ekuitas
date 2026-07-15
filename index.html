@@ -1,0 +1,997 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+
+<!-- PWA Meta -->
+<meta name="theme-color" content="#b3874f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="TTN Marketing">
+
+<!-- Icons -->
+<link rel="icon" type="image/png" sizes="32x32" href="icon_32.png">
+<link rel="icon" type="image/png" sizes="48x48" href="icon_48.png">
+<link rel="icon" type="image/png" sizes="512x512" href="icon_512.png">
+<link rel="apple-touch-icon" sizes="192x192" href="icon_192.png">
+
+<!-- Manifest -->
+<link rel="manifest" href="manifest.json">
+<title>TTN Investor</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="root.css">
+<link rel="stylesheet" href="index.css">
+<link rel="stylesheet" href="home.css">
+<link rel="stylesheet" href="penjualan.css">
+<link rel="stylesheet" href="porto.css">
+<link rel="stylesheet" href="asset.css">
+<link rel="stylesheet" href="profil.css">
+<link rel="stylesheet" href="perjanjian.css">
+<link rel="stylesheet" href="tentang.css">
+<link rel="stylesheet" href="keamanan.css">
+</head>
+<body>
+
+<div id="app">
+
+  <div id="investor-home-view" class="investor-view active">
+    <div class="investor-home-header">
+      <img src="hero.png" alt="" class="investor-home-watermark">
+      <div class="investor-home-toprow">
+        <div class="investor-home-profile">
+          <img src="" alt="" class="investor-home-avatar" id="homeAvatar">
+          <div class="investor-home-greet">
+            <span class="investor-home-hi" id="homeGreeting">Hi,</span>
+            <span class="investor-home-name" id="homeNama">-</span>
+          </div>
+        </div>
+        <button class="investor-home-notif-btn" id="homeNotifBtn">
+          <i class="fa-solid fa-bell"></i>
+          <span class="investor-home-notif-badge" id="homeNotifBadge" style="display:none;">0</span>
+        </button>
+      </div>
+
+      <div class="investor-home-balance">
+        <div class="investor-home-label">
+          <span>Total Ekuitas</span>
+          <i class="fa-solid fa-eye investor-home-eye" id="homeEyeToggle"></i>
+        </div>
+        <div class="investor-home-ekuitas" id="homeEkuitas">Rp 0</div>
+        <div class="investor-home-return-pill" id="homeReturnPill">
+          <span id="homeReturnValue">Rp 0</span>
+          <span id="homeReturnPercent" class="investor-home-return-percent">0%</span>
+        </div>
+        <div class="investor-home-actions">
+          <button class="investor-home-action-btn" data-goto="asset">
+            <i class="fa-solid fa-boxes-stacked"></i>
+            <span>Asset</span>
+          </button>
+          <button class="investor-home-action-btn" data-goto="porto">
+            <i class="fa-solid fa-briefcase"></i>
+            <span>Portofolio</span>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="investor-home-content">
+      <div class="investor-home-summary-grid" id="homeSummaryGrid">
+        <div class="investor-home-summary-card">
+          <span class="investor-home-summary-label">Penjualan Bulan Ini</span>
+          <span class="investor-home-summary-value" id="homeSummaryPenjualan">-</span>
+        </div>
+        <div class="investor-home-summary-card">
+          <span class="investor-home-summary-label">Return Bulan Ini</span>
+          <span class="investor-home-summary-value" id="homeSummaryReturn">-</span>
+        </div>
+        <div class="investor-home-summary-card">
+          <span class="investor-home-summary-label">Valuasi Asset</span>
+          <span class="investor-home-summary-value" id="homeSummaryAsset">-</span>
+        </div>
+      </div>
+
+      <div class="investor-home-chart-card">
+        <div class="investor-home-chart-title">Tren Return 6 Bulan Terakhir</div>
+        <div class="investor-home-chart-wrapper">
+          <canvas id="homeReturnChart" class="investor-home-chart-canvas"></canvas>
+          <div class="investor-home-chart-tooltip" id="homeChartTooltip"></div>
+        </div>
+        <p class="investor-porto-placeholder" id="homeChartEmpty" style="display:none;">Belum ada data</p>
+      </div>
+
+      <div class="investor-home-articles">
+        <div class="investor-home-articles-title">Untuk Anda</div>
+        <div id="homeArtikelList">
+          <p class="investor-porto-placeholder">Memuat artikel...</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="investor-penjualan-view" class="investor-view">
+    <div class="investor-penjualan-header">
+      <h1 class="investor-penjualan-title">Penjualan</h1>
+      <button class="investor-penjualan-filter" id="penjualanFilterBtn">
+        <span id="penjualanFilterLabel">-</span>
+        <i class="fa-solid fa-chevron-right"></i>
+      </button>
+    </div>
+    <div class="investor-penjualan-content">
+      <div class="investor-penjualan-card">
+        <div class="investor-penjualan-tablehead">
+          <span>Tanggal</span>
+          <span>Penjualan</span>
+        </div>
+        <div class="investor-penjualan-list" id="penjualanList"></div>
+        <div class="investor-penjualan-total">
+          <span>Total Penjualan</span>
+          <span id="penjualanTotal">0</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="investor-ocf-view" class="investor-view">
+    <div class="investor-placeholder-box"><p>OCF (placeholder)</p></div>
+  </div>
+
+  <div id="investor-neraca-view" class="investor-view">
+    <div class="investor-placeholder-box"><p>Neraca (placeholder)</p></div>
+  </div>
+
+  <div id="investor-asset-view" class="investor-view">
+    <div class="investor-asset-header">
+      <h1 class="investor-asset-title">Asset</h1>
+    </div>
+    <div class="investor-asset-content" id="assetContent">
+      <p class="investor-porto-placeholder">Memuat data...</p>
+    </div>
+  </div>
+
+  <div id="investor-profil-view" class="investor-view">
+    <div class="investor-profil-header">
+      <div class="investor-profil-avatar-wrap">
+        <img src="" alt="" class="investor-profil-avatar" id="profilAvatar">
+        <button class="investor-profil-edit-btn" id="profilEditBtn">
+          <i class="fa-solid fa-pen"></i>
+        </button>
+        <input type="file" id="profilFotoInput" accept="image/*" style="display:none;">
+
+        <div class="investor-profil-dropdown" id="profilDropdown">
+          <button class="investor-profil-dropdown-item" id="profilUbahFotoBtn">
+            <i class="fa-solid fa-image"></i>
+            <span>Ubah Foto</span>
+          </button>
+          <button class="investor-profil-dropdown-item investor-profil-dropdown-danger" id="profilHapusFotoBtn">
+            <i class="fa-solid fa-trash"></i>
+            <span>Hapus Foto</span>
+          </button>
+        </div>
+      </div>
+      <div class="investor-profil-nama" id="profilNama">-</div>
+      <div class="investor-profil-email" id="profilEmail">-</div>
+    </div>
+
+    <div class="investor-profil-content">
+      <div class="investor-profil-info-card">
+        <div class="investor-profil-info-title">Informasi Akun</div>
+
+        <div class="investor-profil-info-row">
+          <i class="fa-solid fa-envelope"></i>
+          <div>
+            <div class="investor-profil-info-label">Email</div>
+            <div class="investor-profil-info-value" id="profilInfoEmail">-</div>
+          </div>
+        </div>
+
+        <div class="investor-profil-info-row">
+          <i class="fa-solid fa-phone"></i>
+          <div>
+            <div class="investor-profil-info-label">No. Telepon</div>
+            <div class="investor-profil-info-value" id="profilInfoTelepon">-</div>
+          </div>
+        </div>
+
+        <div class="investor-profil-info-row">
+          <i class="fa-solid fa-location-dot"></i>
+          <div>
+            <div class="investor-profil-info-label">Alamat</div>
+            <div class="investor-profil-info-value" id="profilInfoAlamat">-</div>
+          </div>
+        </div>
+
+        <div class="investor-profil-info-row">
+          <i class="fa-solid fa-cake-candles"></i>
+          <div>
+            <div class="investor-profil-info-label">Tempat, Tanggal Lahir</div>
+            <div class="investor-profil-info-value" id="profilInfoTtl">-</div>
+          </div>
+        </div>
+
+        <div class="investor-profil-info-row">
+          <i class="fa-solid fa-shop"></i>
+          <div>
+            <div class="investor-profil-info-label">Cabang Ekuitas</div>
+            <div class="investor-profil-info-value" id="profilInfoCabang">-</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="investor-profil-menu">
+        <button class="investor-profil-menu-item" id="profilSuratPerjanjianBtn">
+          <i class="fa-solid fa-file-contract"></i>
+          <span>Surat Perjanjian Investasi</span>
+        </button>
+        <button class="investor-profil-menu-item" id="profilAksesBtn">
+          <i class="fa-solid fa-sliders"></i>
+          <span>Aksesibilitas</span>
+        </button>
+        <button class="investor-profil-menu-item" id="profilKeamananBtn">
+          <i class="fa-solid fa-shield-halved"></i>
+          <span>Keamanan Akun</span>
+        </button>
+        <button class="investor-profil-menu-item" id="profilTentangBtn">
+          <i class="fa-solid fa-circle-info"></i>
+          <span>Tentang Aplikasi</span>
+        </button>
+        <button class="investor-profil-menu-item investor-profil-logout" id="profilLogoutBtn">
+          <i class="fa-solid fa-right-from-bracket"></i>
+          <span>Logout</span>
+        </button>
+      </div>
+    </div>
+    <div class="profil-version">v1.0.0 · Teh Tarik Nusantara</div>
+  </div>
+  
+  <div class="investor-view" id="investor-suratPerjanjian-view">
+  <div class="keamanan-page">
+
+    <!-- HEADER -->
+    <div class="keamanan-header">
+      <button class="keamanan-back-btn" onclick="showView('profil')">
+        <i class="fa-solid fa-arrow-left"></i>
+      </button>
+      <div class="keamanan-header-title">Surat Perjanjian Investasi</div>
+      <div style="width:36px"></div>
+    </div>
+
+    <!-- BODY -->
+    <div class="keamanan-body">
+
+      <!-- KOP SURAT -->
+      <div class="kop-surat">
+        <img class="kop-surat-logo" id="kopSuratLogo" src="" alt="Logo Perusahaan">
+        <div class="kop-surat-info">
+          <div class="kop-surat-nama" id="kopSuratNama">-</div>
+          <div class="kop-surat-alamat" id="kopSuratSekretariat">-</div>
+          <div class="kop-surat-kontak">
+            <span id="kopSuratTelepon">-</span>
+            <span class="kop-surat-sep">•</span>
+            <span id="kopSuratEmail">-</span>
+            <span class="kop-surat-sep">•</span>
+            <span id="kopSuratWeb">-</span>
+          </div>
+        </div>
+      </div>
+      <div class="kop-surat-divider"></div>
+      <div class="kop-surat-divider-thin"></div>
+
+      <!-- BODY SURAT -->
+      <div class="surat-body">
+
+        <div class="surat-judul">SURAT PERJANJIAN KERJASAMA INVESTASI</div>
+
+        <p class="surat-paragraf">
+          Pada hari ini <span id="suratTanggalInves">-</span>, yang bertandatangan dibawah ini:
+        </p>
+
+        <div class="surat-pihak-box">
+          <div class="surat-pihak-row"><span>Nama</span><span id="suratNamaUser">-</span></div>
+          <div class="surat-pihak-row"><span>NIK</span><span id="suratNikUser">-</span></div>
+          <div class="surat-pihak-row"><span>Pekerjaan</span><span id="suratPekerjaanUser">-</span></div>
+          <div class="surat-pihak-row"><span>Alamat</span><span id="suratAlamatUser">-</span></div>
+        <p class="surat-paragraf">
+          Untuk selanjutnya disebut sebagai <strong>PIHAK PERTAMA</strong>
+        </p>
+        </div>
+
+        <div class="surat-pihak-box">
+          <div class="surat-pihak-row"><span>Nama</span><span id="suratNamaPerusahaan">-</span></div>
+          <div class="surat-pihak-row"><span>NIB</span><span id="suratNibPerusahaan">-</span></div>
+          <div class="surat-pihak-row"><span>NPWP</span><span id="suratNpwpPerusahaan">-</span></div>
+          <div class="surat-pihak-row"><span>SK</span><span id="suratSkPerusahaan">-</span></div>
+        <p class="surat-paragraf">
+          Untuk selanjutnya disebut sebagai <strong>PIHAK KEDUA</strong>
+        </p>
+        </div>
+
+        <p class="surat-paragraf">
+          Bahwa sebelum ditandatanganinya Surat Pernjanjian ini, para pihak terlebih dahulu menerangkan hal-hal sebagai berikut:
+        </p>
+
+        <ol class="surat-list">
+          <li>
+            Bahwa Pihak Pertama adalah selaku INVESTOR yang memiliki modal sebesar
+            <strong id="suratEkuitasNominal">-</strong>,-
+            (<span id="suratEkuitasTerbilang">-</span>) untuk selanjutnya disebut sebagai
+            MODAL INVESTASI untuk CABANG TEH TARIK NUSANTARA
+            <strong id="suratCabangEkuitas1">-</strong>
+          </li>
+          <li>
+            Bahwa Pihak Kedua adalah Pengelola Dana Investasi di bidang CABANG TEH TARIK
+            NUSANTARA yang berlokasi di <strong id="suratCabangEkuitas2">-</strong> yang
+            menerima DANA INVESTASI dari Pihak Pertama.
+          </li>
+          <li>
+            Bahwa Pihak Pertama dan Pihak Kedua setuju untuk saling mengikatkan diri dalam suatu
+            perjanjian kerjasama Investasi dalam Peningkatan Modal Investasi yang telah disebutkan
+            diatas, sesuai dengan ketentuan hukum yang berlaku.
+          </li>
+          <li>
+            Bahwa berdasarkan hal-hal tersebut di atas, kedua belah pihak menyatakan sepakat dan
+            setuju untuk mengadakan Perjanjian Kerjasama ini yang dilaksanakan dengan ketentuan
+            dan syarat-syarat sebagai berikut :
+          </li>
+        </ol>
+
+        <div id="suratPasalList"></div>
+
+        <div class="surat-ttd-wrap">
+          <div class="surat-ttd-col">
+            <div class="surat-ttd-label">Pihak Pertama</div>
+            <div class="surat-ttd-box">
+              <img class="surat-ttd-img" id="suratTtdUser" src="" alt="">
+              <div class="surat-ttd-placeholder" id="suratTtdUserPlaceholder">Tanda Tangan</div>
+            </div>
+            <div class="surat-ttd-nama" id="suratTtdNamaUser">-</div>
+          </div>
+
+          <div class="surat-ttd-col">
+            <div class="surat-ttd-label">Pihak Kedua</div>
+            <div class="surat-ttd-box">
+              <img class="surat-ttd-img" id="suratTtdPerusahaan" src="" alt="">
+              <div class="surat-ttd-placeholder" id="suratTtdPerusahaanPlaceholder">Tanda Tangan</div>
+            </div>
+            <div class="surat-ttd-nama">Pengelola Cabang TTN</div>
+            <div class="surat-ttd-cabang" id="suratTtdCabang">-</div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+</div>
+  
+  <div class="investor-view" id="investor-tentang-view">
+    <div class="tentang-page">
+  
+      <!-- HEADER -->
+      <div class="tentang-header">
+        <button class="tentang-back-btn" onclick="showView('profil')">
+          <i class="fa-solid fa-arrow-left"></i>
+        </button>
+        <div class="tentang-header-title">Tentang Aplikasi</div>
+        <div style="width:36px"></div>
+      </div>
+  
+      <!-- HERO -->
+      <div class="tentang-hero">
+        <div class="tentang-hero-bg"></div>
+        <div class="tentang-hero-pattern"></div>
+        <div class="tentang-logo-wrap">
+          <img src="logoTTN.png" class="tentang-logo" onerror="this.style.display='none'; document.getElementById('tentangLogoFallback').style.display='flex'">
+          <div class="tentang-logo-fallback" id="tentangLogoFallback">TTN</div>
+        </div>
+        <div class="tentang-app-name">Teh Tarik Nusantara</div>
+        <div class="tentang-app-sub">Marketing</div>
+        <div class="tentang-app-version">
+          <i class="fa-solid fa-tag"></i>
+          Versi 1.0.0
+        </div>
+      </div>
+  
+      <!-- BODY -->
+      <div class="tentang-body">
+  
+        <!-- DESKRIPSI -->
+        <div class="tentang-desc-card">
+          <div class="tentang-desc-text">
+            Platform manajemen operasional dan marketing berbasis mobile yang menyediakan data, laporan, dan analisis bisnis secara real-time untuk meningkatkan efisiensi, transparansi, dan skalabilitas usaha.
+          </div>
+        </div>
+  
+        <!-- INFO PERUSAHAAN -->
+        <div class="tentang-section-label">Informasi Perusahaan</div>
+        <div class="tentang-card">
+  
+          <div class="tentang-card-item">
+            <div class="tentang-card-icon brown">
+              <i class="fa-solid fa-building"></i>
+            </div>
+            <div class="tentang-card-info">
+              <div class="tentang-card-label">Perusahaan</div>
+              <div class="tentang-card-value">PT Rizquna Jaya Mandiri</div>
+            </div>
+          </div>
+          <div class="tentang-card-sep"></div>
+  
+          <div class="tentang-card-item">
+            <div class="tentang-card-icon brown">
+              <i class="fa-solid fa-mug-hot"></i>
+            </div>
+            <div class="tentang-card-info">
+              <div class="tentang-card-label">Produk</div>
+              <div class="tentang-card-value">Teh Tarik Nusantara & Es Kenyot</div>
+            </div>
+          </div>
+          <div class="tentang-card-sep"></div>
+  
+          <div class="tentang-card-item">
+            <div class="tentang-card-icon brown">
+              <i class="fa-solid fa-calendar"></i>
+            </div>
+            <div class="tentang-card-info">
+              <div class="tentang-card-label">Berdiri</div>
+              <div class="tentang-card-value">29 Februari 2022</div>
+            </div>
+          </div>
+          <div class="tentang-card-sep"></div>
+  
+          <div class="tentang-card-item">
+            <div class="tentang-card-icon brown">
+              <i class="fa-solid fa-globe"></i>
+            </div>
+            <div class="tentang-card-info">
+              <div class="tentang-card-label">Website</div>
+              <div class="tentang-card-value tentang-link" onclick="window.open('https://www.tehtariknusantara.com','_blank')">
+                www.tehtariknusantara.com
+                <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:10px;margin-left:4px;"></i>
+              </div>
+            </div>
+          </div>
+  
+        </div>
+  
+        <!-- KONTAK -->
+        <div class="tentang-section-label">Hubungi Kami</div>
+        <div class="tentang-card">
+  
+          <div class="tentang-card-item" onclick="window.open('tel:0895694273200')">
+            <div class="tentang-card-icon green">
+              <i class="fa-solid fa-phone"></i>
+            </div>
+            <div class="tentang-card-info">
+              <div class="tentang-card-label">Telepon</div>
+              <div class="tentang-card-value tentang-link">0895694273200</div>
+            </div>
+            <i class="fa-solid fa-chevron-right tentang-arrow"></i>
+          </div>
+          <div class="tentang-card-sep"></div>
+  
+          <div class="tentang-card-item" onclick="window.open('mailto:pt.rizqunajayamandiri@gmail.com')">
+            <div class="tentang-card-icon blue">
+              <i class="fa-solid fa-envelope"></i>
+            </div>
+            <div class="tentang-card-info">
+              <div class="tentang-card-label">Email Perusahaan</div>
+              <div class="tentang-card-value tentang-link">pt.rizqunajayamandiri@gmail.com</div>
+            </div>
+            <i class="fa-solid fa-chevron-right tentang-arrow"></i>
+          </div>
+          <div class="tentang-card-sep"></div>
+  
+          <div class="tentang-card-item" onclick="window.open('mailto:tehtariknusantara@gmail.com')">
+            <div class="tentang-card-icon blue">
+              <i class="fa-solid fa-envelope"></i>
+            </div>
+            <div class="tentang-card-info">
+              <div class="tentang-card-label">Email Produk</div>
+              <div class="tentang-card-value tentang-link">tehtariknusantara@gmail.com</div>
+            </div>
+            <i class="fa-solid fa-chevron-right tentang-arrow"></i>
+          </div>
+  
+        </div>
+  
+        <!-- SOSIAL MEDIA -->
+        <div class="tentang-section-label">Sosial Media</div>
+        <div class="tentang-sosmed-grid">
+  
+          <div class="tentang-sosmed-card" onclick="window.open('https://instagram.com/tehtarik_nusantara','_blank')">
+            <div class="tentang-sosmed-icon ig">
+              <i class="fa-brands fa-instagram"></i>
+            </div>
+            <div class="tentang-sosmed-name">Instagram</div>
+            <div class="tentang-sosmed-handle">Teh Terik Nusantara</div>
+          </div>
+  
+          <div class="tentang-sosmed-card" onclick="window.open('https://www.facebook.com/profile.php?id=61583550478024')">
+            <div class="tentang-sosmed-icon fb">
+              <i class="fa-brands fa-facebook"></i>
+            </div>
+            <div class="tentang-sosmed-name">Facebook</div>
+            <div class="tentang-sosmed-handle">Teh Tarik Nusantara</div>
+          </div>
+  
+          <div class="tentang-sosmed-card" onclick="window.open('https://www.tiktok.com/@teh_tariknusantara.pkl?_r=1&_t=ZS-96u4Wyr461C')">
+            <div class="tentang-sosmed-icon tt">
+              <i class="fa-brands fa-tiktok"></i>
+            </div>
+            <div class="tentang-sosmed-name">TikTok</div>
+            <div class="tentang-sosmed-handle">Teh Tarik Nusantara</div>
+          </div>
+  
+        </div>
+  
+        <!-- APP INFO -->
+        <div class="tentang-section-label">Informasi Aplikasi</div>
+        <div class="tentang-card">
+          <div class="tentang-card-item">
+            <div class="tentang-card-icon gray">
+              <i class="fa-solid fa-code-branch"></i>
+            </div>
+            <div class="tentang-card-info">
+              <div class="tentang-card-label">Versi Aplikasi</div>
+              <div class="tentang-card-value">3.0.0 (Build 3)</div>
+            </div>
+          </div>
+          <div class="tentang-card-sep"></div>
+          <div class="tentang-card-item">
+            <div class="tentang-card-icon gray">
+              <i class="fa-solid fa-shield"></i>
+            </div>
+            <div class="tentang-card-info">
+              <div class="tentang-card-label">Keamanan Data</div>
+              <div class="tentang-card-value">Firebase Auth</div>
+            </div>
+          </div>
+        </div>
+  
+        <!-- FOOTER -->
+        <div class="tentang-footer">
+          <div class="tentang-footer-logo">TTN</div>
+          <div class="tentang-footer-text">© 2022 PT Rizquna Jaya Mandiri</div>
+          <div class="tentang-footer-sub">Teh Tarik Nusantara · All rights reserved</div>
+        </div>
+  
+      </div>
+    </div>
+  </div>
+  
+  <div class="investor-view" id="investor-keamanan-view">
+    <div class="keamanan-page">
+  
+      <!-- HEADER -->
+      <div class="keamanan-header">
+        <button class="keamanan-back-btn" onclick="showView('profil')">
+          <i class="fa-solid fa-arrow-left"></i>
+        </button>
+        <div class="keamanan-header-title">Keamanan Akun</div>
+        <div style="width:36px"></div>
+      </div>
+  
+      <!-- BODY -->
+      <div class="keamanan-body">
+  
+        <!-- STATUS KEAMANAN -->
+        <div class="keamanan-status-card">
+          <div class="keamanan-status-icon">
+            <i class="fa-solid fa-shield-halved"></i>
+          </div>
+          <div class="keamanan-status-info">
+            <div class="keamanan-status-title">Akun Terlindungi</div>
+            <div class="keamanan-status-sub">Keamanan akun Anda dalam kondisi baik</div>
+          </div>
+          <div class="keamanan-status-badge">Aman</div>
+        </div>
+  
+        <!-- IDENTITAS AKUN -->
+        <div class="keamanan-section-label">Identitas Akun</div>
+        <div class="keamanan-card">
+  
+          <div class="keamanan-card-item">
+            <div class="keamanan-card-icon brown">
+              <i class="fa-solid fa-fingerprint"></i>
+            </div>
+            <div class="keamanan-card-info">
+              <div class="keamanan-card-label">User ID</div>
+              <div class="keamanan-card-value uid-text" id="keamananUID">-</div>
+            </div>
+            <button class="keamanan-copy-btn" id="btnCopyUID">
+              <i class="fa-regular fa-copy"></i>
+            </button>
+          </div>
+          <div class="keamanan-card-sep"></div>
+  
+          <div class="keamanan-card-item">
+            <div class="keamanan-card-icon blue">
+              <i class="fa-solid fa-envelope"></i>
+            </div>
+            <div class="keamanan-card-info">
+              <div class="keamanan-card-label">Email Akun</div>
+              <div class="keamanan-card-value" id="keamananEmail">-</div>
+            </div>
+          </div>
+          <div class="keamanan-card-sep"></div>
+  
+          <div class="keamanan-card-item">
+            <div class="keamanan-card-icon green">
+              <i class="fa-solid fa-circle-check"></i>
+            </div>
+            <div class="keamanan-card-info">
+              <div class="keamanan-card-label">Status Verifikasi</div>
+              <div class="keamanan-card-value" id="keamananVerifikasi">-</div>
+            </div>
+          </div>
+          <div class="keamanan-card-sep"></div>
+  
+          <div class="keamanan-card-item">
+            <div class="keamanan-card-icon orange">
+              <i class="fa-solid fa-clock"></i>
+            </div>
+            <div class="keamanan-card-info">
+              <div class="keamanan-card-label">Login Terakhir</div>
+              <div class="keamanan-card-value" id="keamananLastLogin">-</div>
+            </div>
+          </div>
+  
+        </div>
+  
+        <!-- SESI AKTIF -->
+        <div class="keamanan-section-label">Sesi Aktif</div>
+        <div class="keamanan-card">
+          <div class="keamanan-sesi-item">
+            <div class="keamanan-sesi-icon">
+              <i class="fa-solid fa-mobile-screen"></i>
+            </div>
+            <div class="keamanan-sesi-info">
+              <div class="keamanan-sesi-title">Perangkat Ini</div>
+              <div class="keamanan-sesi-sub" id="keamananDevice">-</div>
+            </div>
+            <div class="keamanan-sesi-badge">Aktif</div>
+          </div>
+        </div>
+  
+        <!-- PRIVASI DATA -->
+        <div class="keamanan-section-label">Privasi & Data</div>
+        <div class="keamanan-card">
+  
+          <div class="keamanan-menu-item">
+            <div class="keamanan-menu-left">
+              <div class="keamanan-card-icon purple">
+                <i class="fa-solid fa-database"></i>
+              </div>
+              <div>
+                <div class="keamanan-menu-title">Data Tersimpan Lokal</div>
+                <div class="keamanan-menu-sub">IndexedDB di perangkat ini</div>
+              </div>
+            </div>
+            <div class="keamanan-menu-badge" id="keamananDataLokal">-</div>
+          </div>
+          <div class="keamanan-card-sep"></div>
+  
+          <div class="keamanan-menu-item">
+            <div class="keamanan-menu-left">
+              <div class="keamanan-card-icon blue">
+                <i class="fa-solid fa-cloud"></i>
+              </div>
+              <div>
+                <div class="keamanan-menu-title">Sinkronisasi Cloud</div>
+                <div class="keamanan-menu-sub">Firebase Firestore</div>
+              </div>
+            </div>
+            <div class="keamanan-sesi-badge" id="keamananSyncStatus">-</div>
+          </div>
+          <div class="keamanan-card-sep"></div>
+  
+          <div class="keamanan-menu-item">
+            <div class="keamanan-menu-left">
+              <div class="keamanan-card-icon gray">
+                <i class="fa-solid fa-lock"></i>
+              </div>
+              <div>
+                <div class="keamanan-menu-title">Enkripsi Data</div>
+                <div class="keamanan-menu-sub">Firebase Auth + Firestore Rules</div>
+              </div>
+            </div>
+            <div class="keamanan-sesi-badge">Aktif</div>
+          </div>
+  
+        </div>
+  
+        <!-- TINDAKAN -->
+        <div class="keamanan-section-label">Tindakan Keamanan</div>
+        <div class="keamanan-card">
+  
+          <div class="keamanan-menu-item" id="btnKeamananRefreshToken">
+            <div class="keamanan-menu-left">
+              <div class="keamanan-card-icon green">
+                <i class="fa-solid fa-rotate"></i>
+              </div>
+              <div>
+                <div class="keamanan-menu-title">Perbarui Sesi</div>
+                <div class="keamanan-menu-sub">Refresh token autentikasi</div>
+              </div>
+            </div>
+            <i class="fa-solid fa-chevron-right tentang-arrow"></i>
+          </div>
+          <div class="keamanan-card-sep"></div>
+  
+          <div class="keamanan-menu-item" id="btnKeamananLogoutAll">
+            <div class="keamanan-menu-left">
+              <div class="keamanan-card-icon red">
+                <i class="fa-solid fa-right-from-bracket"></i>
+              </div>
+              <div>
+                <div class="keamanan-menu-title" id="logoutModalTitle">Logout Paksa</div>
+                <div class="keamanan-menu-sub" id="logoutModalDesc">Keluar dari semua sesi aktif</div>
+              </div>
+            </div>
+            <i class="fa-solid fa-chevron-right tentang-arrow"></i>
+          </div>
+  
+        </div>
+  
+        <!-- INFO -->
+        <div class="keamanan-info-box">
+          <i class="fa-solid fa-circle-info"></i>
+          <div>Data Anda dienkripsi dan dilindungi oleh Firebase Authentication. Kami tidak menyimpan password dalam bentuk apapun.</div>
+        </div>
+  
+      </div>
+    </div>
+  </div>
+
+  <div id="investor-porto-view" class="investor-view">
+    <div class="investor-porto-header">
+      <div class="investor-porto-label">
+        <span>Total Ekuitas</span>
+        <i class="fa-solid fa-eye investor-porto-eye" id="portoEyeToggle"></i>
+      </div>
+      <div class="investor-porto-ekuitas" id="portoEkuitas">Rp 0</div>
+      <div class="investor-porto-return-pill">
+        <span id="portoReturnValue">Rp 0</span>
+        <span id="portoReturnPercent" class="investor-porto-return-percent">0%</span>
+      </div>
+    </div>
+
+    <div class="investor-porto-content">
+      <div class="investor-porto-tabs">
+        <button class="investor-porto-tab active" data-tab="roi">
+          <i class="fa-solid fa-chart-line"></i>
+          <span>ROI</span>
+        </button>
+        <button class="investor-porto-tab" data-tab="ocf">
+          <i class="fa-solid fa-money-bill-trend-up"></i>
+          <span>OCF</span>
+        </button>
+        <button class="investor-porto-tab" data-tab="labarugi">
+          <i class="fa-solid fa-file-invoice-dollar"></i>
+          <span>Laba Rugi</span>
+        </button>
+        <button class="investor-porto-tab" data-tab="neraca">
+          <i class="fa-solid fa-scale-balanced"></i>
+          <span>Neraca Saldo</span>
+        </button>
+      </div>
+
+      <div class="investor-porto-card" id="portoDetailCard">
+        <p class="investor-porto-placeholder">Belum ada data</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ===== NAVBAR ===== -->
+<div class="navbar-bottom" id="navbarBottom">
+
+  <svg class="nav-bg" viewBox="0 0 400 80" preserveAspectRatio="none">
+    <path id="navSvgPath" d="M16 16 H400 Q400 16 400 32 V64 Q400 80 384 80 H16 Q0 80 0 64 V32 Q0 16 16 16 Z"/>
+  </svg>
+
+  <div class="nav-fab" id="navFab">
+    <i class="fa-solid fa-house" id="navFabIcon"></i>
+  </div>
+
+  <div class="nav-items">
+    <div class="nav-item" data-view="penjualan" data-icon="fa-solid fa-chart-line">
+      <i class="fa-solid fa-chart-line nav-icon"></i>
+      <span>Penjualan</span>
+    </div>
+    <div class="nav-item active" data-view="home" data-icon="fa-solid fa-house">
+      <span class="nav-placeholder"></span>
+      <span>Home</span>
+    </div>
+    <div class="nav-item" data-view="profil" data-icon="fa-solid fa-user">
+      <i class="fa-solid fa-user nav-icon"></i>
+      <span>Profil</span>
+    </div>
+  </div>
+
+</div>
+
+<div class="investor-sheet-overlay" id="artikelSheetOverlay"></div>
+<div class="investor-sheet investor-artikel-sheet" id="artikelSheet">
+  <div class="investor-sheet-handle"></div>
+  <img src="" alt="" class="investor-artikel-detail-thumb" id="artikelDetailThumb">
+  <h2 class="investor-artikel-detail-judul" id="artikelDetailJudul">-</h2>
+  <div class="investor-artikel-detail-konten" id="artikelDetailKonten"></div>
+</div>
+
+<div class="investor-crop-overlay" id="cropOverlay">
+  <div class="investor-crop-modal">
+    <div class="investor-crop-header">Sesuaikan Foto</div>
+    <div class="investor-crop-viewport" id="cropViewport">
+      <img id="cropImage" class="investor-crop-image" alt="">
+    </div>
+    <input type="range" id="cropZoom" class="investor-crop-zoom" min="1" max="3" step="0.01" value="1">
+    <div class="investor-crop-actions">
+      <button class="investor-crop-btn investor-crop-cancel" id="cropCancelBtn">Batal</button>
+      <button class="investor-crop-btn investor-crop-save" id="cropSaveBtn">Simpan</button>
+    </div>
+  </div>
+</div>
+
+<div class="investor-confirm-overlay" id="confirmOverlay">
+  <div class="investor-confirm-modal">
+    <div class="investor-confirm-icon"><i class="fa-solid fa-trash"></i></div>
+    <div class="investor-confirm-title">Hapus Foto Profil?</div>
+    <div class="investor-confirm-desc">Foto profil kamu akan dihapus permanen.</div>
+    <div class="investor-confirm-actions">
+      <button class="investor-confirm-btn investor-confirm-cancel" id="confirmCancelBtn">Batal</button>
+      <button class="investor-confirm-btn investor-confirm-delete" id="confirmDeleteBtn">Hapus</button>
+    </div>
+  </div>
+</div>
+
+<div class="investor-confirm-overlay" id="logoutOverlay">
+  <div class="investor-confirm-modal">
+    <div class="investor-confirm-icon investor-confirm-icon-neutral"><i class="fa-solid fa-right-from-bracket"></i></div>
+    <div class="investor-confirm-title">Keluar dari Akun?</div>
+    <div class="investor-confirm-desc">Kamu perlu login kembali untuk mengakses aplikasi.</div>
+    <div class="investor-confirm-actions">
+      <button class="investor-confirm-btn investor-confirm-cancel" id="logoutCancelBtn">Batal</button>
+      <button class="investor-confirm-btn investor-confirm-delete" id="logoutConfirmBtn">Logout</button>
+    </div>
+  </div>
+</div>
+
+<div class="investor-notif-overlay" id="aksesOverlay"></div>
+<div class="investor-notif-panel" id="aksesPanel">
+  <div class="investor-akses-header">
+    <div class="investor-akses-header-left">
+      <i class="fa-solid fa-sliders"></i>
+      <h2 class="investor-notif-title">Aksesibilitas</h2>
+    </div>
+    <button class="investor-akses-close-btn" id="aksesCloseBtn">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+  </div>
+  <div class="investor-notif-content">
+    <div class="investor-akses-row">
+      <div class="investor-akses-row-icon"><i class="fa-solid fa-moon"></i></div>
+      <div class="investor-akses-row-text">
+        <div class="investor-akses-row-title">Mode Gelap</div>
+        <div class="investor-akses-row-desc">Tampilan lebih nyaman di malam hari</div>
+      </div>
+      <label class="investor-toggle">
+        <input type="checkbox" id="aksesDarkModeToggle">
+        <span class="investor-toggle-slider"></span>
+      </label>
+    </div>
+
+    <div class="investor-akses-row investor-akses-row-column">
+      <div class="investor-akses-row-top">
+        <div class="investor-akses-row-icon"><i class="fa-solid fa-text-height"></i></div>
+        <div class="investor-akses-row-text">
+          <div class="investor-akses-row-title">Ukuran Teks</div>
+          <div class="investor-akses-row-desc">Sesuaikan ukuran tampilan aplikasi</div>
+        </div>
+        <span class="investor-akses-fontvalue" id="aksesFontValue">0.0</span>
+      </div>
+      <div class="investor-akses-slider-row">
+        <button class="investor-akses-slider-btn" id="aksesFontMinus">-</button>
+        <input type="range" id="aksesFontSlider" class="investor-akses-slider" min="-5" max="5" step="1" value="0">
+        <button class="investor-akses-slider-btn" id="aksesFontPlus">+</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="investor-notif-overlay" id="notifOverlay"></div>
+<div class="investor-notif-panel" id="notifPanel">
+  <div class="investor-notif-header">
+    <h2 class="investor-notif-title">Notifikasi</h2>
+  </div>
+  <div class="investor-notif-content">
+    <div class="investor-notif-section">
+      <div class="investor-notif-section-title">Belum Dibaca</div>
+      <div class="investor-notif-list" id="notifUnreadList">
+        <p class="investor-porto-placeholder">Tidak ada notifikasi baru</p>
+      </div>
+    </div>
+    <div class="investor-notif-section">
+      <div class="investor-notif-section-title">Sudah Dibaca</div>
+      <div class="investor-notif-list" id="notifReadList">
+        <p class="investor-porto-placeholder">Belum ada riwayat</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="investor-sheet-overlay" id="neracaSheetOverlay"></div>
+<div class="investor-sheet" id="neracaSheet">
+  <div class="investor-sheet-handle"></div>
+  <h2 class="investor-sheet-title">Pilih Periode</h2>
+  <div class="investor-sheet-field">
+    <div class="investor-custom-select" id="neracaBulanDropdown">
+      <button type="button" class="investor-custom-select-trigger" id="neracaBulanTrigger">
+        <span id="neracaBulanLabel">Juli</span>
+        <i class="fa-solid fa-chevron-down"></i>
+      </button>
+      <div class="investor-custom-select-options" id="neracaBulanOptions"></div>
+    </div>
+  </div>
+  <div class="investor-sheet-field">
+    <div class="investor-custom-select" id="neracaTahunDropdown">
+      <button type="button" class="investor-custom-select-trigger" id="neracaTahunTrigger">
+        <span id="neracaTahunLabel">2026</span>
+        <i class="fa-solid fa-chevron-down"></i>
+      </button>
+      <div class="investor-custom-select-options" id="neracaTahunOptions"></div>
+    </div>
+  </div>
+  <button class="investor-sheet-btn" id="neracaTerapkanBtn">Terapkan</button>
+</div>
+
+<div class="investor-sheet-overlay" id="penjualanSheetOverlay"></div>
+<div class="investor-sheet" id="penjualanSheet">
+  <div class="investor-sheet-handle"></div>
+  <h2 class="investor-sheet-title">Filter Periode</h2>
+  <div class="investor-sheet-field">
+    <div class="investor-custom-select" id="penjualanBulanDropdown">
+      <button type="button" class="investor-custom-select-trigger" id="penjualanBulanTrigger">
+        <span id="penjualanBulanLabel">Januari</span>
+        <i class="fa-solid fa-chevron-down"></i>
+      </button>
+      <div class="investor-custom-select-options" id="penjualanBulanOptions"></div>
+    </div>
+  </div>
+  <div class="investor-sheet-field">
+    <div class="investor-custom-select" id="penjualanTahunDropdown">
+      <button type="button" class="investor-custom-select-trigger" id="penjualanTahunTrigger">
+        <span id="penjualanTahunLabel">2026</span>
+        <i class="fa-solid fa-chevron-down"></i>
+      </button>
+      <div class="investor-custom-select-options" id="penjualanTahunOptions"></div>
+    </div>
+  </div>
+  <button class="investor-sheet-btn" id="penjualanTerapkanBtn">Terapkan</button>
+</div>
+
+<script type="module" src="index.js"></script>
+<script src="home.js"></script>
+<script src="penjualan.js"></script>
+<script src="porto.js"></script>
+<script src="asset.js"></script>
+<script src="profil.js"></script>
+<script src="perjanjian.js"></script>
+<script src="keamanan.js"></script>
+
+<script>
+  (function(){
+    var dm = localStorage.getItem("pref_darkmode");
+    if (dm === "1") document.documentElement.classList.add("dark-mode");
+    var fs = localStorage.getItem("pref_fontscale");
+    if (fs) document.documentElement.style.setProperty("--user-font-scale", (1 + parseFloat(fs) * 0.05));
+  })();
+</script>
+
+<div id="devConsoleMount"></div>
+<script src="devconsole.js"></script>
+</body>
