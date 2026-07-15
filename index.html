@@ -43,10 +43,11 @@
       <img src="hero.png" alt="" class="investor-home-watermark">
       <div class="investor-home-toprow">
         <div class="investor-home-profile">
-          <img src="" alt="" class="investor-home-avatar" id="homeAvatar">
+          <div class="skeleton investor-home-avatar" id="homeAvatarSkeleton"></div>
+          <img src="" alt="" class="investor-home-avatar" id="homeAvatar" style="display:none;">
           <div class="investor-home-greet">
-            <span class="investor-home-hi" id="homeGreeting">Hi,</span>
-            <span class="investor-home-name" id="homeNama">-</span>
+            <span class="investor-home-hi" id="homeGreeting">Selamat Datang</span>
+            <span class="investor-home-name" id="homeNama">Pemegang Ekuitas</span>
           </div>
         </div>
         <button class="investor-home-notif-btn" id="homeNotifBtn">
@@ -78,7 +79,24 @@
       </div>
     </div>
     <div class="investor-home-content">
-      <div class="investor-home-summary-grid" id="homeSummaryGrid">
+
+      <!-- SKELETON SUMMARY -->
+      <div class="investor-home-summary-grid" id="homeSkeletonSummary">
+        <div class="skeleton-summary-card">
+          <div class="skeleton skeleton-line"></div>
+          <div class="skeleton skeleton-value"></div>
+        </div>
+        <div class="skeleton-summary-card">
+          <div class="skeleton skeleton-line"></div>
+          <div class="skeleton skeleton-value"></div>
+        </div>
+        <div class="skeleton-summary-card">
+          <div class="skeleton skeleton-line"></div>
+          <div class="skeleton skeleton-value"></div>
+        </div>
+      </div>
+
+      <div class="investor-home-summary-grid" id="homeSummaryGrid" style="display:none;">
         <div class="investor-home-summary-card">
           <span class="investor-home-summary-label">Penjualan Bulan Ini</span>
           <span class="investor-home-summary-value" id="homeSummaryPenjualan">-</span>
@@ -93,7 +111,13 @@
         </div>
       </div>
 
-      <div class="investor-home-chart-card">
+      <!-- SKELETON CHART -->
+      <div class="skeleton-chart-card" id="homeSkeletonChart">
+        <div class="skeleton skeleton-chart-title"></div>
+        <div class="skeleton skeleton-chart-body"></div>
+      </div>
+
+      <div class="investor-home-chart-card" id="homeChartCard" style="display:none;">
         <div class="investor-home-chart-title">Tren Return 6 Bulan Terakhir</div>
         <div class="investor-home-chart-wrapper">
           <canvas id="homeReturnChart" class="investor-home-chart-canvas"></canvas>
@@ -104,9 +128,26 @@
 
       <div class="investor-home-articles">
         <div class="investor-home-articles-title">Untuk Anda</div>
-        <div id="homeArtikelList">
-          <p class="investor-porto-placeholder">Memuat artikel...</p>
+
+        <!-- SKELETON ARTIKEL -->
+        <div id="homeSkeletonArtikel" style="display:flex;flex-direction:column;gap:12px;">
+          <div class="skeleton-article-card">
+            <div class="skeleton skeleton-article-thumb"></div>
+            <div class="skeleton-article-body">
+              <div class="skeleton skeleton-article-line w-80"></div>
+              <div class="skeleton skeleton-article-line w-60"></div>
+            </div>
+          </div>
+          <div class="skeleton-article-card">
+            <div class="skeleton skeleton-article-thumb"></div>
+            <div class="skeleton-article-body">
+              <div class="skeleton skeleton-article-line w-80"></div>
+              <div class="skeleton skeleton-article-line w-60"></div>
+            </div>
+          </div>
         </div>
+
+        <div id="homeArtikelList" style="display:none;"></div>
       </div>
     </div>
   </div>

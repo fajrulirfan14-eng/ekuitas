@@ -1,19 +1,57 @@
+
+// idb
+const ROI_IDB_NAME = "roiCacheDB";
+const ROI_IDB_STORE = "cache";
+function roiOpenIdb() {
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open(ROI_IDB_NAME, 1);
+    req.onupgradeneeded = () => {
+      req.result.createObjectStore(ROI_IDB_STORE, { keyPath: "key" });
+    };
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+}
+async function roiIdbSet(key, value) {
+  try {
+    const db = await roiOpenIdb();
+    return new Promise((resolve) => {
+      const tx = db.transaction(ROI_IDB_STORE, "readwrite");
+      tx.objectStore(ROI_IDB_STORE).put({ key, value, updatedAt: Date.now() });
+      tx.oncomplete = () => resolve(true);
+      tx.onerror = () => resolve(false);
+    });
+  } catch {
+    return false;
+  }
+}
+async function roiIdbGet(key) {
+  try {
+    const db = await roiOpenIdb();
+    return new Promise((resolve) => {
+      const tx = db.transaction(ROI_IDB_STORE, "readonly");
+      const req = tx.objectStore(ROI_IDB_STORE).get(key);
+      req.onsuccess = () => resolve(req.result?.value ?? null);
+      req.onerror = () => resolve(null);
+    });
+  } catch {
+    return null;
+  }
+}
+
 function portoFormatRupiah(angka) {
   return "Rp " + Math.round(angka || 0).toLocaleString("id-ID");
 }
-
 const bulanNamaList = [
   "Januari", "Februari", "Maret", "April", "Mei", "Juni",
   "Juli", "Agustus", "September", "Oktober", "November", "Desember"
 ];
-
 function formatPeriode(periode) {
   if (!periode) return "-";
   const [tahun, bulan] = periode.split("-");
   const idx = parseInt(bulan, 10) - 1;
   return `${bulanNamaList[idx] || bulan} ${tahun}`;
 }
-
 const portoTabLabels = {
   neraca: "Neraca Saldo",
   labarugi: "Laba Rugi",
@@ -23,12 +61,11 @@ const portoTabLabels = {
 
 let portoActiveTab = "roi";
 let portoHidden = false;
-
-let neracaSelectedPeriode = null; // "2026-07", null = pakai yang terbaru
+let neracaSelectedPeriode = null;
 let neracaTempBulan = new Date().getMonth();
 let neracaTempTahun = new Date().getFullYear();
 let neracaSheetInitialized = false;
-let neracaCache = new Map(); // key: periode string atau "__latest__"
+let neracaCache = new Map();
 let neracaLoading = false;
 
 function sumArray(arr) {
@@ -51,7 +88,6 @@ async function neracaFetchLatest() {
   if (snap.empty) return null;
   return snap.docs[0].data();
 }
-
 async function neracaFetchByPeriode(periode) {
   const idCabang = window.currentUser?.idCabang;
   if (!idCabang) return null;
@@ -67,7 +103,6 @@ async function neracaFetchByPeriode(periode) {
   if (snap.empty) return null;
   return snap.docs[0].data();
 }
-
 function renderNeracaSection(title, items) {
   if (!items || items.length === 0) return "";
   const rows = items.map(item => `
@@ -88,7 +123,6 @@ function renderNeracaSection(title, items) {
     </div>
   `;
 }
-
 function renderNeracaSaldo(data) {
   const card = document.getElementById("portoDetailCard");
 
@@ -144,7 +178,6 @@ function renderLoading() {
   document.getElementById("portoDetailCard").innerHTML =
     `<p class="investor-porto-placeholder">Memuat data...</p>`;
 }
-
 function renderError() {
   document.getElementById("portoDetailCard").innerHTML =
     `<p class="investor-porto-placeholder">Gagal memuat data</p>`;
@@ -174,23 +207,19 @@ async function neracaLoadAndRender() {
     neracaLoading = false;
   }
 }
-
 function neracaOpenSheet() {
   document.getElementById("neracaSheetOverlay").classList.add("active");
   document.getElementById("neracaSheet").classList.add("active");
 }
-
 function neracaCloseSheet() {
   document.getElementById("neracaSheetOverlay").classList.remove("active");
   document.getElementById("neracaSheet").classList.remove("active");
 }
-
 function neracaCloseAllDropdowns(except) {
   document.querySelectorAll(".investor-custom-select.open").forEach(el => {
     if (el !== except) el.classList.remove("open");
   });
 }
-
 function neracaInitCustomDropdown({ wrapperId, triggerId, optionsId, labelId, values, getSelected, onSelect }) {
   const wrapper = document.getElementById(wrapperId);
   const trigger = document.getElementById(triggerId);
@@ -224,13 +253,11 @@ function neracaInitCustomDropdown({ wrapperId, triggerId, optionsId, labelId, va
 
   labelEl.textContent = values.find(v => v.value === getSelected())?.label || "-";
 }
-
 function neracaInitSheetInteraction() {
   const overlay = document.getElementById("neracaSheetOverlay");
   const sheet   = document.getElementById("neracaSheet");
   window.attachSwipeToClose(sheet, overlay, neracaCloseSheet);
 }
-
 function neracaInitSheet() {
   if (neracaSheetInitialized) return;
 
@@ -279,7 +306,6 @@ function neracaInitSheet() {
 
 let roiCache = null;
 let roiLoading = false;
-
 async function roiFetchAll() {
   const idCabang = window.currentUser?.idCabang;
   const uid = window.currentUser?.uid;
@@ -307,7 +333,6 @@ async function roiFetchAll() {
 
   return result;
 }
-
 function renderRoiList(data) {
   const card = document.getElementById("portoDetailCard");
 
@@ -341,7 +366,6 @@ function renderRoiList(data) {
     </div>
   `;
 }
-
 async function roiLoadAndRender() {
   if (roiLoading) return;
 
@@ -356,6 +380,10 @@ async function roiLoadAndRender() {
     const data = await roiFetchAll();
     roiCache = data;
     renderRoiList(data);
+
+    // simpan ke IDB khusus buat dibaca home.js
+    const idCabang = window.currentUser?.idCabang || "unknown";
+    roiIdbSet(`roiHistory_${idCabang}`, data);
   } catch (err) {
     console.error(err);
     renderError();
@@ -363,7 +391,6 @@ async function roiLoadAndRender() {
     roiLoading = false;
   }
 }
-
 async function portoRenderTabContent(tab) {
   if (tab === "neraca") {
     neracaInitSheet();
@@ -379,7 +406,6 @@ async function portoRenderTabContent(tab) {
   const card = document.getElementById("portoDetailCard");
   card.innerHTML = `<p class="investor-porto-placeholder">Data ${portoTabLabels[tab]} belum tersedia</p>`;
 }
-
 function portoSwitchTab(tab) {
   portoActiveTab = tab;
   document.querySelectorAll(".investor-porto-tab").forEach(btn => {

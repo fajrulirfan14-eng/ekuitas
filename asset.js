@@ -1,7 +1,47 @@
+
+// idb
+const ASSET_IDB_NAME = "assetCacheDB";
+const ASSET_IDB_STORE = "cache";
+function assetOpenIdb() {
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open(ASSET_IDB_NAME, 1);
+    req.onupgradeneeded = () => {
+      req.result.createObjectStore(ASSET_IDB_STORE, { keyPath: "key" });
+    };
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+}
+async function assetIdbSet(key, value) {
+  try {
+    const db = await assetOpenIdb();
+    return new Promise((resolve) => {
+      const tx = db.transaction(ASSET_IDB_STORE, "readwrite");
+      tx.objectStore(ASSET_IDB_STORE).put({ key, value, updatedAt: Date.now() });
+      tx.oncomplete = () => resolve(true);
+      tx.onerror = () => resolve(false);
+    });
+  } catch {
+    return false;
+  }
+}
+async function assetIdbGet(key) {
+  try {
+    const db = await assetOpenIdb();
+    return new Promise((resolve) => {
+      const tx = db.transaction(ASSET_IDB_STORE, "readonly");
+      const req = tx.objectStore(ASSET_IDB_STORE).get(key);
+      req.onsuccess = () => resolve(req.result?.value ?? null);
+      req.onerror = () => resolve(null);
+    });
+  } catch {
+    return null;
+  }
+}
+
 function assetFormatRupiah(angka) {
   return "Rp " + Math.round(angka || 0).toLocaleString("id-ID");
 }
-
 let assetCache = null;
 let assetLoading = false;
 
@@ -19,12 +59,10 @@ async function assetFetchData() {
   if (snap.empty) return null;
   return snap.docs[0].data();
 }
-
 function assetSumKategori(items) {
   if (!Array.isArray(items)) return 0;
   return items.reduce((sum, item) => sum + (Number(item.harga) || 0) * (Number(item.qty) || 1), 0);
 }
-
 function renderAssetSection(title, items) {
   if (!items || items.length === 0) {
     return `
@@ -59,7 +97,6 @@ function renderAssetSection(title, items) {
     </div>
   `;
 }
-
 function renderAssetContent(data) {
   const content = document.getElementById("assetContent");
 
@@ -102,7 +139,6 @@ function renderAssetContent(data) {
     </div>
   `;
 }
-
 async function assetLoadAndRender() {
   if (assetLoading) return;
 
@@ -119,6 +155,19 @@ async function assetLoadAndRender() {
     const data = await assetFetchData();
     assetCache = data;
     renderAssetContent(data);
+
+    // simpan total asset bersih ke IDB khusus buat dibaca home.js
+    if (data) {
+      const penyusutanDistribusi = Number(data.penyusutanAset?.distribusi) || 0;
+      const penyusutanProduksi   = Number(data.penyusutanAset?.produksi) || 0;
+      const totalPenyusutan      = penyusutanDistribusi + penyusutanProduksi;
+      const subtotalDistribusi   = assetSumKategori(data.distribusi);
+      const subtotalProduksi     = assetSumKategori(data.produksi);
+      const totalAsetBersih      = subtotalProduksi + subtotalDistribusi - totalPenyusutan;
+
+      const idCabang = window.currentUser?.idCabang || "unknown";
+      assetIdbSet(`totalAsset_${idCabang}`, totalAsetBersih);
+    }
   } catch (err) {
     console.error(err);
     document.getElementById("assetContent").innerHTML =

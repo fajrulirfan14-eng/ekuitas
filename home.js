@@ -1,10 +1,50 @@
+
+// idb 
+const ARTIKEL_IDB_NAME = "artikelCacheDB";
+const ARTIKEL_IDB_STORE = "cache";
+function artikelOpenIdb() {
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open(ARTIKEL_IDB_NAME, 1);
+    req.onupgradeneeded = () => {
+      req.result.createObjectStore(ARTIKEL_IDB_STORE, { keyPath: "key" });
+    };
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+}
+async function artikelIdbSet(key, value) {
+  try {
+    const db = await artikelOpenIdb();
+    return new Promise((resolve) => {
+      const tx = db.transaction(ARTIKEL_IDB_STORE, "readwrite");
+      tx.objectStore(ARTIKEL_IDB_STORE).put({ key, value, updatedAt: Date.now() });
+      tx.oncomplete = () => resolve(true);
+      tx.onerror = () => resolve(false);
+    });
+  } catch {
+    return false;
+  }
+}
+async function artikelIdbGet(key) {
+  try {
+    const db = await artikelOpenIdb();
+    return new Promise((resolve) => {
+      const tx = db.transaction(ARTIKEL_IDB_STORE, "readonly");
+      const req = tx.objectStore(ARTIKEL_IDB_STORE).get(key);
+      req.onsuccess = () => resolve(req.result?.value ?? null);
+      req.onerror = () => resolve(null);
+    });
+  } catch {
+    return null;
+  }
+}
+
 function formatRupiah(angka) {
   return "Rp " + Math.round(angka || 0).toLocaleString("id-ID");
 }
 
 let notifSwipeInitialized = false;
 let notifCache = null;
-
 function formatNotifWaktu(createdAt) {
   if (!createdAt || !createdAt.toDate) return "";
   const date = createdAt.toDate();
@@ -168,35 +208,20 @@ function formatUpdatedAt() {
 
 async function homeFetchPenjualanBulanIni() {
   try {
-    const adminUid = await penjualanGetAdminUid();
-    if (!adminUid) return 0;
-
-    const now = new Date();
-    const bulanStr = String(now.getMonth() + 1).padStart(2, "0");
-    const tahun = now.getFullYear();
-    const daysInMonth = new Date(tahun, now.getMonth() + 1, 0).getDate();
-    const startDate = `${tahun}-${bulanStr}-01`;
-    const endDate = `${tahun}-${bulanStr}-${String(daysInMonth).padStart(2, "0")}`;
-
-    const q = window.query(
-      window.collection(window.db, "users", adminUid, "laporanAdmin"),
-      window.where("tanggal", ">=", startDate),
-      window.where("tanggal", "<=", endDate)
-    );
-
-    const snap = await window.getDocs(q);
-    let total = 0;
-    snap.forEach(docSnap => { total += penjualanSumDoc(docSnap.data()); });
-    return total;
+    const idCabang = window.currentUser?.idCabang || "unknown";
+    const cached = await penjualanIdbGet(`penjualanBulanIni_${idCabang}`);
+    return cached ?? 0;
   } catch (err) {
     console.error(err);
-    return null;
+    return 0;
   }
 }
 async function homeFetchReturnBulanIni() {
   try {
-    const data = await roiFetchAll();
-    return { latest: data[0] || null, history: data };
+    const idCabang = window.currentUser?.idCabang || "unknown";
+    const data = await roiIdbGet(`roiHistory_${idCabang}`);
+    const list = data || [];
+    return { latest: list[0] || null, history: list };
   } catch (err) {
     console.error(err);
     return { latest: null, history: [] };
@@ -204,19 +229,12 @@ async function homeFetchReturnBulanIni() {
 }
 async function homeFetchTotalAsset() {
   try {
-    const data = await assetFetchData();
-    if (!data) return null;
-
-    const penyusutanDistribusi = Number(data.penyusutanAset?.distribusi) || 0;
-    const penyusutanProduksi   = Number(data.penyusutanAset?.produksi) || 0;
-    const totalPenyusutan      = penyusutanDistribusi + penyusutanProduksi;
-    const subtotalDistribusi   = assetSumKategori(data.distribusi);
-    const subtotalProduksi     = assetSumKategori(data.produksi);
-
-    return subtotalProduksi + subtotalDistribusi - totalPenyusutan;
+    const idCabang = window.currentUser?.idCabang || "unknown";
+    const cached = await assetIdbGet(`totalAsset_${idCabang}`);
+    return cached ?? 0;
   } catch (err) {
     console.error(err);
-    return null;
+    return 0;
   }
 }
 
@@ -347,14 +365,27 @@ async function homeLoadSummary() {
   document.getElementById("homeSummaryAsset").textContent =
     totalAsset === null ? "Gagal memuat" : formatRupiah(totalAsset);
 
+  document.getElementById("homeSkeletonSummary").style.display = "none";
+  document.getElementById("homeSummaryGrid").style.display = "grid";
+
+  document.getElementById("homeSkeletonChart").style.display = "none";
+  document.getElementById("homeChartCard").style.display = "block";
+
   drawReturnChart(returnData.history);
 }
 
 window.initHomeView = function () {
-  const user   = window.currentUser || {};
-  const avatar = document.getElementById("homeAvatar");
-  const nama   = document.getElementById("homeNama");
+  const user     = window.currentUser || {};
+  const avatar   = document.getElementById("homeAvatar");
+  const avatarSk = document.getElementById("homeAvatarSkeleton");
+  const nama     = document.getElementById("homeNama");
 
+  const showAvatar = () => {
+    avatarSk.style.display = "none";
+    avatar.style.display = "block";
+  };
+  avatar.onload = showAvatar;
+  avatar.onerror = showAvatar;
   avatar.src = user.foto && user.foto.trim() !== ""
     ? user.foto
     : "https://api.dicebear.com/7.x/initials/svg?seed=" + encodeURIComponent(user.nama || "U");
@@ -414,7 +445,11 @@ async function homeFetchArtikel() {
   return list;
 }
 function renderArtikelList(list) {
+  const skeletonEl = document.getElementById("homeSkeletonArtikel");
   const container = document.getElementById("homeArtikelList");
+
+  if (skeletonEl) skeletonEl.style.display = "none";
+  container.style.display = "flex";
 
   if (!list || list.length === 0) {
     container.innerHTML = `<p class="investor-porto-placeholder">Belum ada artikel</p>`;
@@ -439,18 +474,43 @@ function renderArtikelList(list) {
   });
 }
 async function homeLoadArtikel() {
+  // 1. render in-memory cache dulu kalau ada (paling instant, sesi masih sama)
   if (artikelCache) {
     renderArtikelList(artikelCache);
+    fetchFreshArtikel();
     return;
   }
+
+  // 2. render dari IDB kalau ada (instant walau baru buka sesi)
+  const cachedIdb = await artikelIdbGet("artikelList");
+  if (cachedIdb) {
+    artikelCache = cachedIdb;
+    renderArtikelList(cachedIdb);
+    fetchFreshArtikel();
+    return;
+  }
+
+  // 3. belum ada cache sama sekali → baru tunjukin loading & tunggu fetch
   try {
     const list = await homeFetchArtikel();
     artikelCache = list;
+    artikelIdbSet("artikelList", list);
     renderArtikelList(list);
   } catch (err) {
     console.error(err);
     document.getElementById("homeArtikelList").innerHTML =
       `<p class="investor-porto-placeholder">Gagal memuat artikel</p>`;
+  }
+}
+async function fetchFreshArtikel() {
+  try {
+    const list = await homeFetchArtikel();
+    artikelCache = list;
+    artikelIdbSet("artikelList", list);
+    renderArtikelList(list);
+  } catch (err) {
+    console.error(err);
+    // gagal fetch fresh, biarkan yang di-render tetap cache lama
   }
 }
 function openArtikelDetail(artikel) {

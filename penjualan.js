@@ -1,3 +1,43 @@
+// idb
+const PENJUALAN_IDB_NAME = "penjualanCacheDB";
+const PENJUALAN_IDB_STORE = "cache";
+function penjualanOpenIdb() {
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open(PENJUALAN_IDB_NAME, 1);
+    req.onupgradeneeded = () => {
+      req.result.createObjectStore(PENJUALAN_IDB_STORE, { keyPath: "key" });
+    };
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+}
+async function penjualanIdbSet(key, value) {
+  try {
+    const db = await penjualanOpenIdb();
+    return new Promise((resolve) => {
+      const tx = db.transaction(PENJUALAN_IDB_STORE, "readwrite");
+      tx.objectStore(PENJUALAN_IDB_STORE).put({ key, value, updatedAt: Date.now() });
+      tx.oncomplete = () => resolve(true);
+      tx.onerror = () => resolve(false);
+    });
+  } catch {
+    return false;
+  }
+}
+async function penjualanIdbGet(key) {
+  try {
+    const db = await penjualanOpenIdb();
+    return new Promise((resolve) => {
+      const tx = db.transaction(PENJUALAN_IDB_STORE, "readonly");
+      const req = tx.objectStore(PENJUALAN_IDB_STORE).get(key);
+      req.onsuccess = () => resolve(req.result?.value ?? null);
+      req.onerror = () => resolve(null);
+    });
+  } catch {
+    return null;
+  }
+}
+
 const bulanList = [
   "Januari", "Februari", "Maret", "April", "Mei", "Juni",
   "Juli", "Agustus", "September", "Oktober", "November", "Desember"
@@ -145,6 +185,14 @@ async function penjualanLoadAndRender(bulan, tahun, forceRefresh = false) {
     const data = await penjualanFetchData(bulan, tahun);
     penjualanCache.set(cacheKey, data);
     penjualanRenderList(data);
+
+    // simpan ke IDB khusus buat dibaca home.js — hanya untuk bulan berjalan
+    const now = new Date();
+    if (bulan === now.getMonth() && tahun === now.getFullYear()) {
+      const idCabang = window.currentUser?.idCabang || "unknown";
+      const total = data.reduce((sum, item) => sum + item.penjualan, 0);
+      penjualanIdbSet(`penjualanBulanIni_${idCabang}`, total);
+    }
   } catch (err) {
     console.error(err);
     penjualanLastError = err;
