@@ -125,7 +125,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 /* ===== ROUTER ===== */
 const NAVBAR_VISIBLE_VIEWS = ["home", "profil", "penjualan"];
-
 window.showView = function (viewName, trigger = "push") {
   const prevViewEl = document.querySelector(".investor-view.active");
   document.querySelectorAll(".investor-view").forEach(v => {
@@ -167,7 +166,7 @@ window.showView = function (viewName, trigger = "push") {
     window[initFnName]();
   }
 };
-function syncNavToView(viewName) {
+window.syncNavToView = function syncNavToView(viewName) {
   const items = document.querySelectorAll(".nav-item");
   items.forEach(i => {
     if (i.dataset.label) {

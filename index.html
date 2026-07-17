@@ -37,7 +37,8 @@
 <body>
 
 <div id="app">
-
+  
+  <!--- HOME --->
   <div id="investor-home-view" class="investor-view active">
     <div class="investor-home-header">
       <img src="hero.png" alt="" class="investor-home-watermark">
@@ -110,6 +111,26 @@
           <span class="investor-home-summary-value" id="homeSummaryAsset">-</span>
         </div>
       </div>
+      
+      <!-- SKELETON CHART PENJUALAN -->
+      <div class="skeleton-chart-card" id="homeSkeletonChartPenjualan">
+        <div class="skeleton skeleton-chart-title"></div>
+        <div class="skeleton skeleton-chart-body"></div>
+      </div>
+
+      <div class="investor-home-chart-card" id="homeChartPenjualanCard" style="display:none; cursor:pointer;">
+        <div class="investor-home-chart-title">Penjualan & Non Jual Bulan Ini</div>
+        <div class="investor-penjualan-chart-legend">
+          <span class="investor-penjualan-legend-item"><i class="legend-dot legend-dot-penjualan"></i> Penjualan</span>
+          <span class="investor-penjualan-legend-item"><i class="legend-dot legend-dot-nonjual"></i> Non Jual</span>
+        </div>
+        <div class="investor-home-chart-wrapper">
+          <canvas id="homeChartPenjualan" class="investor-home-chart-canvas"></canvas>
+          <div class="investor-home-chart-tooltip" id="homeChartPenjualanTooltip"></div>
+        </div>
+        <p class="investor-porto-placeholder" id="homeChartPenjualanEmpty" style="display:none;">Belum ada data</p>
+        <p class="investor-penjualan-insight-text" id="homeChartPenjualanInsightText"></p>
+      </div>
 
       <!-- SKELETON CHART -->
       <div class="skeleton-chart-card" id="homeSkeletonChart">
@@ -152,6 +173,7 @@
     </div>
   </div>
 
+  <!--- PENJUALAN --->
   <div id="investor-penjualan-view" class="investor-view">
     <div class="investor-penjualan-header">
       <h1 class="investor-penjualan-title">Penjualan</h1>
@@ -164,25 +186,36 @@
       <div class="investor-penjualan-card">
         <div class="investor-penjualan-tablehead">
           <span>Tanggal</span>
+          <span>Non Jual</span>
           <span>Penjualan</span>
         </div>
         <div class="investor-penjualan-list" id="penjualanList"></div>
+        <div class="investor-penjualan-total">
+          <span>Total Non Jual</span>
+          <span id="penjualanNonJualTotal">0</span>
+        </div>
         <div class="investor-penjualan-total">
           <span>Total Penjualan</span>
           <span id="penjualanTotal">0</span>
         </div>
       </div>
+      <div class="investor-penjualan-chart-card">
+        <div class="investor-penjualan-chart-title">Grafik Penjualan & Non Jual</div>
+        <div class="investor-penjualan-chart-legend">
+          <span class="investor-penjualan-legend-item"><i class="legend-dot legend-dot-penjualan"></i> Penjualan</span>
+          <span class="investor-penjualan-legend-item"><i class="legend-dot legend-dot-nonjual"></i> Non Jual</span>
+        </div>
+        <div class="investor-penjualan-chart-wrapper">
+          <canvas id="penjualanChart" class="investor-penjualan-chart-canvas"></canvas>
+          <div class="investor-penjualan-chart-tooltip" id="penjualanChartTooltip"></div>
+        </div>
+        <p class="investor-porto-placeholder" id="penjualanChartEmpty" style="display:none;">Belum ada data</p>
+        <p class="investor-penjualan-insight-text" id="penjualanInsightText"></p>
+      </div>
     </div>
   </div>
 
-  <div id="investor-ocf-view" class="investor-view">
-    <div class="investor-placeholder-box"><p>OCF (placeholder)</p></div>
-  </div>
-
-  <div id="investor-neraca-view" class="investor-view">
-    <div class="investor-placeholder-box"><p>Neraca (placeholder)</p></div>
-  </div>
-
+  <!--- ASSET --->
   <div id="investor-asset-view" class="investor-view">
     <div class="investor-asset-header">
       <h1 class="investor-asset-title">Asset</h1>
@@ -192,6 +225,7 @@
     </div>
   </div>
 
+  <!--- PROFIL --->
   <div id="investor-profil-view" class="investor-view">
     <div class="investor-profil-header">
       <div class="investor-profil-avatar-wrap">
@@ -287,6 +321,7 @@
     <div class="profil-version">v1.0.0 · Teh Tarik Nusantara</div>
   </div>
   
+  <!--- PERJANJIAN --->
   <div class="investor-view" id="investor-suratPerjanjian-view">
   <div class="keamanan-page">
 
@@ -407,6 +442,7 @@
   </div>
 </div>
   
+  <!--- TENTANG --->
   <div class="investor-view" id="investor-tentang-view">
     <div class="tentang-page">
   
@@ -603,6 +639,7 @@
     </div>
   </div>
   
+  <!--- KEAMANAN --->
   <div class="investor-view" id="investor-keamanan-view">
     <div class="keamanan-page">
   
@@ -787,8 +824,12 @@
     </div>
   </div>
 
+  <!--- PORTOFOLIO --->
   <div id="investor-porto-view" class="investor-view">
     <div class="investor-porto-header">
+      <button class="investor-porto-back-btn" onclick="showView('home')">
+        Back to Home
+      </button>
       <div class="investor-porto-label">
         <span>Total Ekuitas</span>
         <i class="fa-solid fa-eye investor-porto-eye" id="portoEyeToggle"></i>
@@ -809,10 +850,6 @@
         <button class="investor-porto-tab" data-tab="ocf">
           <i class="fa-solid fa-money-bill-trend-up"></i>
           <span>OCF</span>
-        </button>
-        <button class="investor-porto-tab" data-tab="labarugi">
-          <i class="fa-solid fa-file-invoice-dollar"></i>
-          <span>Laba Rugi</span>
         </button>
         <button class="investor-porto-tab" data-tab="neraca">
           <i class="fa-solid fa-scale-balanced"></i>
@@ -1033,6 +1070,4 @@
   })();
 </script>
 
-<div id="devConsoleMount"></div>
-<script src="devconsole.js"></script>
 </body>

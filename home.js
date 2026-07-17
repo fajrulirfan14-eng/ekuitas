@@ -238,21 +238,21 @@ async function homeFetchTotalAsset() {
   }
 }
 
-let homeChartPoints = [];
-let homeChartListenerAttached = false;
-function drawReturnChart(history) {
-  const canvas = document.getElementById("homeReturnChart");
-  const emptyEl = document.getElementById("homeChartEmpty");
+let returnChartPointsMap = {};
+function drawReturnChart(canvasId, tooltipId, emptyElId, history, limitBulan = 6) {
+  const canvas = document.getElementById(canvasId);
+  const emptyEl = document.getElementById(emptyElId);
+  if (!canvas) return;
 
-  const data = [...history].reverse().slice(-6);
+  const data = limitBulan ? [...history].reverse().slice(-limitBulan) : [...history].reverse();
 
   if (data.length === 0) {
     canvas.style.display = "none";
-    emptyEl.style.display = "block";
+    if (emptyEl) emptyEl.style.display = "block";
     return;
   }
   canvas.style.display = "block";
-  emptyEl.style.display = "none";
+  if (emptyEl) emptyEl.style.display = "none";
 
   const dpr = window.devicePixelRatio || 1;
   const rect = canvas.getBoundingClientRect();
@@ -275,55 +275,83 @@ function drawReturnChart(history) {
   const style = getComputedStyle(document.documentElement);
   const accentColor = style.getPropertyValue("--accent").trim() || "#b3874f";
 
-  ctx.clearRect(0, 0, W, H);
-
   const points = data.map((d, i) => {
     const x = padding + i * stepX;
     const y = H - padding - ((d.return - minVal) / range) * (H - padding * 2);
     return { x, y, value: d.return, periode: d.periode };
   });
 
-  ctx.beginPath();
-  ctx.strokeStyle = accentColor;
-  ctx.lineWidth = 2;
-  points.forEach((p, i) => {
-    if (i === 0) ctx.moveTo(p.x, p.y);
-    else ctx.lineTo(p.x, p.y);
-  });
-  ctx.stroke();
+  function drawLabels() {
+    ctx.fillStyle = style.getPropertyValue("--text-muted").trim() || "#999";
+    ctx.font = "10px Poppins, sans-serif";
+    ctx.textAlign = "center";
+    points.forEach(p => {
+      const [, bulan] = p.periode.split("-");
+      ctx.fillText(bulan, p.x, H - 6);
+    });
+  }
 
-  points.forEach(p => {
+  function renderFrame(progress) {
+    ctx.clearRect(0, 0, W, H);
+    ctx.save();
+    const clipX = padding + (W - padding * 2) * progress;
     ctx.beginPath();
-    ctx.fillStyle = accentColor;
-    ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
-    ctx.fill();
-  });
+    ctx.rect(0, 0, clipX, H);
+    ctx.clip();
 
-  ctx.fillStyle = style.getPropertyValue("--text-muted").trim() || "#999";
-  ctx.font = "10px Poppins, sans-serif";
-  ctx.textAlign = "center";
-  points.forEach(p => {
-    const [, bulan] = p.periode.split("-");
-    ctx.fillText(bulan, p.x, H - 6);
-  });
+    ctx.beginPath();
+    ctx.strokeStyle = accentColor;
+    ctx.lineWidth = 2;
+    points.forEach((p, i) => {
+      if (i === 0) ctx.moveTo(p.x, p.y);
+      else ctx.lineTo(p.x, p.y);
+    });
+    ctx.stroke();
 
-  homeChartPoints = points;
+    points.forEach(p => {
+      ctx.beginPath();
+      ctx.fillStyle = accentColor;
+      ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
+      ctx.fill();
+    });
+    ctx.restore();
 
-  if (!homeChartListenerAttached) {
-    canvas.addEventListener("click", handleChartClick);
-    homeChartListenerAttached = true;
+    drawLabels();
+  }
+
+  // animasi "muncul" dari kiri ke kanan, ~600ms
+  let start = null;
+  const duration = 600;
+  function step(ts) {
+    if (!start) start = ts;
+    const elapsed = ts - start;
+    const progress = Math.min(1, elapsed / duration);
+    renderFrame(progress);
+    if (progress < 1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+
+  returnChartPointsMap[canvasId] = points;
+
+  // pasang listener klik di elemen canvas ITU SENDIRI (bukan flag global by id),
+  // supaya tetap kepasang walau canvas-nya baru (habis di-render ulang lewat innerHTML)
+  if (!canvas.dataset.chartClickBound) {
+    canvas.dataset.chartClickBound = "true";
+    canvas.addEventListener("click", (e) => handleChartClick(e, canvas.id, tooltipId));
   }
 }
-function handleChartClick(e) {
-  const canvas = document.getElementById("homeReturnChart");
-  const tooltip = document.getElementById("homeChartTooltip");
+function handleChartClick(e, canvasId, tooltipId) {
+  const canvas = e.currentTarget;
+  const tooltip = document.getElementById(tooltipId);
+  const points = returnChartPointsMap[canvasId] || [];
+  if (!tooltip) return;
   const rect = canvas.getBoundingClientRect();
   const clickX = e.clientX - rect.left;
   const clickY = e.clientY - rect.top;
 
   let nearest = null;
   let minDist = Infinity;
-  homeChartPoints.forEach(p => {
+  points.forEach(p => {
     const dist = Math.hypot(p.x - clickX, p.y - clickY);
     if (dist < minDist) {
       minDist = dist;
@@ -349,11 +377,27 @@ function handleChartClick(e) {
   tooltip.classList.add("visible");
 }
 
+async function homeFetchPenjualanChartData() {
+  try {
+    const idCabang = window.currentUser?.idCabang || "unknown";
+    const data = await penjualanIdbGet(`penjualanDataBulanIni_${idCabang}`);
+    if (!data || !data.length) return [];
+
+    // defensif: potong sampai hari ini, jaga-jaga kalau IDB masih nyimpen array lama (sebelum ada fix trim)
+    const now = new Date();
+    const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+    return data.filter(d => d.tanggal <= todayStr);
+  } catch (err) {
+    console.error(err);
+    return [];
+  }
+}
 async function homeLoadSummary() {
-  const [penjualan, returnData, totalAsset] = await Promise.all([
+  const [penjualan, returnData, totalAsset, penjualanChartData] = await Promise.all([
     homeFetchPenjualanBulanIni(),
     homeFetchReturnBulanIni(),
-    homeFetchTotalAsset()
+    homeFetchTotalAsset(),
+    homeFetchPenjualanChartData()
   ]);
 
   document.getElementById("homeSummaryPenjualan").textContent =
@@ -370,12 +414,21 @@ async function homeLoadSummary() {
 
   document.getElementById("homeSkeletonChart").style.display = "none";
   document.getElementById("homeChartCard").style.display = "block";
+  drawReturnChart("homeReturnChart", "homeChartTooltip", "homeChartEmpty", returnData.history, 6);
 
-  drawReturnChart(returnData.history);
+  document.getElementById("homeSkeletonChartPenjualan").style.display = "none";
+  document.getElementById("homeChartPenjualanCard").style.display = "block";
+  window.drawPenjualanNonJualChart("homeChartPenjualan", "homeChartPenjualanTooltip", "homeChartPenjualanEmpty", penjualanChartData);
+  window.renderPenjualanInsight("homeChartPenjualanInsightText", penjualanChartData);
 }
 
 window.initHomeView = function () {
   const user     = window.currentUser || {};
+  document.getElementById("homeChartPenjualanCard")?.addEventListener("click", (e) => {
+    if (e.target.id === "homeChartPenjualan") return;
+    window.showView("penjualan", "navbar");
+    window.syncNavToView?.("penjualan");
+  });
   const avatar   = document.getElementById("homeAvatar");
   const avatarSk = document.getElementById("homeAvatarSkeleton");
   const nama     = document.getElementById("homeNama");

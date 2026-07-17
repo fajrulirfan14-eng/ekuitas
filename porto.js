@@ -54,7 +54,6 @@ function formatPeriode(periode) {
 }
 const portoTabLabels = {
   neraca: "Neraca Saldo",
-  labarugi: "Laba Rugi",
   ocf: "OCF",
   roi: "ROI"
 };
@@ -306,6 +305,17 @@ function neracaInitSheet() {
 
 let roiCache = null;
 let roiLoading = false;
+let roiFilterTahun = null;
+
+function roiGetAvailableYears(data) {
+  const years = [...new Set(data.map(item => Number(item.periode.split("-")[0])))];
+  return years.sort((a, b) => b - a); // terbaru dulu
+}
+function roiCloseAllDropdowns(except) {
+  document.querySelectorAll(".investor-roi-year-dropdown.open").forEach(el => {
+    if (el !== except) el.classList.remove("open");
+  });
+}
 async function roiFetchAll() {
   const idCabang = window.currentUser?.idCabang;
   const uid = window.currentUser?.uid;
@@ -341,9 +351,16 @@ function renderRoiList(data) {
     return;
   }
 
+  const availableYears = roiGetAvailableYears(data);
+  if (roiFilterTahun === null) {
+    roiFilterTahun = availableYears[0];
+  }
+
+  const filteredData = data.filter(item => Number(item.periode.split("-")[0]) === roiFilterTahun);
+
   const ekuitas = window.currentUser?.ekuitas || 0;
 
-  const rows = data.map(item => {
+  const rows = filteredData.length ? filteredData.map(item => {
     const isNegative = item.return < 0;
     const percent = ekuitas > 0 ? (item.return / ekuitas) * 100 : 0;
     const colorClass = isNegative ? "investor-neraca-laba-negatif" : "investor-neraca-laba-positif";
@@ -357,14 +374,63 @@ function renderRoiList(data) {
         </span>
       </div>
     `;
-  }).join("");
+  }).join("") : `<p class="investor-porto-placeholder">Belum ada data return di tahun ${roiFilterTahun}</p>`;
 
   card.innerHTML = `
-    <div class="investor-neraca-section">
-      <div class="investor-neraca-section-title">Riwayat Return</div>
+    <div class="investor-porto-chart-card">
+      <div class="investor-porto-chart-title">Grafik Return ${roiFilterTahun}</div>
+      <div class="investor-home-chart-wrapper">
+        <canvas id="portoReturnChart" class="investor-home-chart-canvas"></canvas>
+        <div class="investor-home-chart-tooltip" id="portoReturnChartTooltip"></div>
+      </div>
+      <p class="investor-porto-placeholder" id="portoReturnChartEmpty" style="display:none;">Belum ada data</p>
+    </div>
+
+    <div class="investor-neraca-section investor-porto-riwayat-section">
+      <div class="investor-neraca-section-header">
+        <div class="investor-neraca-section-title">Riwayat Return</div>
+        <div class="investor-roi-year-dropdown" id="roiYearDropdown">
+          <button class="investor-roi-year-btn" id="roiYearBtn">
+            <span>${roiFilterTahun}</span>
+            <i class="fa-solid fa-chevron-down"></i>
+          </button>
+          <div class="investor-roi-year-options" id="roiYearOptions">
+            ${availableYears.map(y => `
+              <div class="investor-roi-year-option ${y === roiFilterTahun ? "selected" : ""}" data-year="${y}">${y}</div>
+            `).join("")}
+          </div>
+        </div>
+      </div>
       ${rows}
     </div>
   `;
+
+  initRoiYearDropdown(data);
+  const chartHistory = [...filteredData].sort((a, b) => a.periode.localeCompare(b.periode)).reverse();
+  window.drawReturnChart("portoReturnChart", "portoReturnChartTooltip", "portoReturnChartEmpty", chartHistory, null);
+}
+function initRoiYearDropdown(data) {
+  const wrapper = document.getElementById("roiYearDropdown");
+  const trigger = document.getElementById("roiYearBtn");
+  const optsEl  = document.getElementById("roiYearOptions");
+  if (!wrapper || !trigger || !optsEl) return;
+
+  trigger.onclick = (e) => {
+    e.stopPropagation();
+    const willOpen = !wrapper.classList.contains("open");
+    roiCloseAllDropdowns(wrapper);
+    wrapper.classList.toggle("open", willOpen);
+  };
+
+  optsEl.onclick = (e) => {
+    const opt = e.target.closest(".investor-roi-year-option");
+    if (!opt) return;
+    roiFilterTahun = Number(opt.dataset.year);
+    wrapper.classList.remove("open");
+    renderRoiList(data);
+  };
+
+  document.addEventListener("click", () => roiCloseAllDropdowns());
 }
 async function roiLoadAndRender() {
   if (roiLoading) return;
