@@ -12,11 +12,7 @@ window.initSuratPerjanjianView = async function() {
   };
 
   try {
-    const q = window.query(
-      window.collection(window.db, "suratPerjanjianInvestasi"),
-      window.where("idCabang", "==", user.idCabang)
-    );
-    const snap = await window.getDocs(q);
+    const snap = await window.getDocs(window.collection(window.db, "suratPerjanjianInvestasi"));
     if (snap.empty) return;
 
     const data = snap.docs[0].data();
