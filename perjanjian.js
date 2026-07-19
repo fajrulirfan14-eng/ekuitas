@@ -19,7 +19,6 @@ window.initSuratPerjanjianView = async function() {
     const snap = await window.getDocs(q);
     if (snap.empty) return;
 
-    // pakai infoPerusahaan dari dokumen surat pertama (data sama di semua dokumen cabang ybs)
     const data = snap.docs[0].data();
     const info = data.infoPerusahaan || {};
 
@@ -52,6 +51,12 @@ window.initSuratPerjanjianView = async function() {
 
     // BODY SURAT — Pasal-pasal
     const ekuitasFormatted = "Rp " + ekuitas.toLocaleString("id-ID") + ",-";
+
+    const tanggalInvestFormatted = user.tanggalInvest
+      ? new Date(user.tanggalInvest).toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" })
+      : (user.tanggalInvest || "-");
+    const cabangEkuitasFormatted = user.cabangEkuitas || "-";
+
     const pasalArr = (data.pasal || [])
       .map(p => p.pasal)
       .filter(Boolean)
@@ -60,7 +65,10 @@ window.initSuratPerjanjianView = async function() {
     const pasalListEl = document.getElementById("suratPasalList");
     if (pasalListEl) {
       pasalListEl.innerHTML = pasalArr.map(p => {
-        const isiFinal = (p.isi || "").replace(/"ekuitas"/g, `<strong>${ekuitasFormatted}</strong>`);
+        const isiFinal = (p.isi || "")
+          .replace(/"ekuitas"/g, `<strong>${ekuitasFormatted}</strong>`)
+          .replace(/"cabangEkuitas"/g, `<strong>${cabangEkuitasFormatted}</strong>`)
+          .replace(/"tanggalInvest"/g, `<strong>${tanggalInvestFormatted}</strong>`);
         return `
           <div class="surat-pasal">
             <div class="surat-pasal-no">PASAL ${p.no || "-"}</div>
