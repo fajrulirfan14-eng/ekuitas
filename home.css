@@ -216,10 +216,6 @@
   gap: 6px;
 }
 
-.investor-home-summary-card:first-child {
-  grid-column: span 2;
-}
-
 .investor-home-summary-label {
   font-size: 11px;
   color: var(--text-secondary);

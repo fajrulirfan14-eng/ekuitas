@@ -54,7 +54,6 @@ function formatPeriode(periode) {
 }
 const portoTabLabels = {
   neraca: "Neraca Saldo",
-  ocf: "OCF",
   roi: "ROI"
 };
 

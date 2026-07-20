@@ -227,16 +227,6 @@ async function homeFetchReturnBulanIni() {
     return { latest: null, history: [] };
   }
 }
-async function homeFetchTotalAsset() {
-  try {
-    const idCabang = window.currentUser?.idCabang || "unknown";
-    const cached = await assetIdbGet(`totalAsset_${idCabang}`);
-    return cached ?? 0;
-  } catch (err) {
-    console.error(err);
-    return 0;
-  }
-}
 
 let returnChartPointsMap = {};
 function drawReturnChart(canvasId, tooltipId, emptyElId, history, limitBulan = 6) {
@@ -393,10 +383,9 @@ async function homeFetchPenjualanChartData() {
   }
 }
 async function homeLoadSummary() {
-  const [penjualan, returnData, totalAsset, penjualanChartData] = await Promise.all([
+  const [penjualan, returnData, penjualanChartData] = await Promise.all([
     homeFetchPenjualanBulanIni(),
     homeFetchReturnBulanIni(),
-    homeFetchTotalAsset(),
     homeFetchPenjualanChartData()
   ]);
 
@@ -405,9 +394,6 @@ async function homeLoadSummary() {
 
   document.getElementById("homeSummaryReturn").textContent =
     returnData.latest ? formatRupiah(returnData.latest.return) : "Rp 0";
-
-  document.getElementById("homeSummaryAsset").textContent =
-    totalAsset === null ? "Gagal memuat" : formatRupiah(totalAsset);
 
   document.getElementById("homeSkeletonSummary").style.display = "none";
   document.getElementById("homeSummaryGrid").style.display = "grid";
